@@ -10,9 +10,9 @@
     <StackPanel>
         <!-- Connection Controls - Always Visible -->
         <GroupBox Header="Connection">
-            <Button>
+            <Button HorizontalAlignment="Left" MinWidth="120">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource SecondaryBackgroundButton}">
+                    <Style TargetType="Button">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Connected}" Value="False">
                                 <Setter Property="Command" Value="{Binding ConnectCommand}"/>
