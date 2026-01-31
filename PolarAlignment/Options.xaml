@@ -454,19 +454,7 @@
                 Header="AAPA Polar Alignment System"
                 Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid Margin="0,10,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid DataContext="{Binding UniversalPolarAlignmentAAPAVM}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Button Command="{Binding ConnectCommand}" Visibility="{Binding Connected, Converter={StaticResource InverseBooleanToVisibilityCollapsedConverter}}">Test Connect</Button>
-                        <Button Command="{Binding DisconnectCommand}" Visibility="{Binding Connected, Converter={StaticResource BooleanToVisibilityConverter}}">Disconnect</Button>
-                    </Grid>
-                    <ContentPresenter Grid.Row="1" Content="{Binding UniversalPolarAlignmentAAPAVM}" />
+                    <ContentPresenter Content="{Binding UniversalPolarAlignmentAAPAVM}" />
                 </Grid>
             </GroupBox>
 
