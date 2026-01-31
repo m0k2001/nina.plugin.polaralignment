@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
              xmlns:local="clr-namespace:NINA.Plugins.PolarAlignment.AAPA"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="400">
@@ -10,6 +11,10 @@
     <UserControl.Resources>
         <!-- Boolean to Visibility Converter -->
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+
+        <!-- Float values for command parameters -->
+        <s:Single x:Key="NegativeOne">-1</s:Single>
+        <s:Single x:Key="One">1</s:Single>
         
         <Style x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="Margin" Value="5"/>
@@ -101,13 +106,13 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Content="▼ Down" 
-                               Command="{Binding NudgeXCommand}" 
-                               CommandParameter="-1.0"
+                        <Button Grid.Column="0" Content="▼ Down"
+                               Command="{Binding NudgeXCommand}"
+                               CommandParameter="{StaticResource NegativeOne}"
                                Style="{StaticResource ButtonStyle}"/>
-                        <Button Grid.Column="1" Content="▲ Up" 
-                               Command="{Binding NudgeXCommand}" 
-                               CommandParameter="1.0"
+                        <Button Grid.Column="1" Content="▲ Up"
+                               Command="{Binding NudgeXCommand}"
+                               CommandParameter="{StaticResource One}"
                                Style="{StaticResource ButtonStyle}"/>
                     </Grid>
                 </StackPanel>
@@ -120,13 +125,13 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Content="◄ Left" 
-                               Command="{Binding NudgeYCommand}" 
-                               CommandParameter="-1.0"
+                        <Button Grid.Column="0" Content="◄ Left"
+                               Command="{Binding NudgeYCommand}"
+                               CommandParameter="{StaticResource NegativeOne}"
                                Style="{StaticResource ButtonStyle}"/>
-                        <Button Grid.Column="1" Content="► Right" 
-                               Command="{Binding NudgeYCommand}" 
-                               CommandParameter="1.0"
+                        <Button Grid.Column="1" Content="► Right"
+                               Command="{Binding NudgeYCommand}"
+                               CommandParameter="{StaticResource One}"
                                Style="{StaticResource ButtonStyle}"/>
                     </Grid>
                 </StackPanel>
