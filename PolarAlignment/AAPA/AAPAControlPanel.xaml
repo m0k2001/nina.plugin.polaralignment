@@ -34,6 +34,104 @@
             </StackPanel>
         </GroupBox>
 
+        <!-- Motor Settings - Always Visible -->
+        <Grid Margin="0,5,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <!-- Azimuth Settings -->
+            <GroupBox Header="Azimuth Motor Settings">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5">Speed</TextBlock>
+                    <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" SelectedValue="{Binding XSpeed}">
+                        <ComboBox.ItemsSource>
+                            <x:Array Type="{x:Type s:Int32}">
+                                <s:Int32>100</s:Int32>
+                                <s:Int32>200</s:Int32>
+                                <s:Int32>300</s:Int32>
+                                <s:Int32>400</s:Int32>
+                                <s:Int32>500</s:Int32>
+                                <s:Int32>600</s:Int32>
+                                <s:Int32>700</s:Int32>
+                                <s:Int32>800</s:Int32>
+                                <s:Int32>900</s:Int32>
+                                <s:Int32>1000</s:Int32>
+                            </x:Array>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+                    <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Margin="5">GearRatio</TextBlock>
+                    <TextBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding XGearRatio}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5">Run (mA)</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding XRunCurrent}" />
+                    <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="5">Hold %</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding XHoldPercent}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5">Backlash</TextBlock>
+                    <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding XBacklashCompensation}" />
+                    <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Content="Reverse Direction" IsChecked="{Binding ReverseAzimuth}" Margin="5" VerticalAlignment="Center" />
+                </Grid>
+            </GroupBox>
+
+            <!-- Altitude Settings -->
+            <GroupBox Grid.Column="1" Header="Altitude Motor Settings">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5">Speed</TextBlock>
+                    <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" SelectedItem="{Binding YSpeed}">
+                        <ComboBox.ItemsSource>
+                            <x:Array Type="{x:Type s:Int32}">
+                                <s:Int32>100</s:Int32>
+                                <s:Int32>200</s:Int32>
+                                <s:Int32>300</s:Int32>
+                                <s:Int32>400</s:Int32>
+                                <s:Int32>500</s:Int32>
+                                <s:Int32>600</s:Int32>
+                                <s:Int32>700</s:Int32>
+                                <s:Int32>800</s:Int32>
+                                <s:Int32>900</s:Int32>
+                                <s:Int32>1000</s:Int32>
+                            </x:Array>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+                    <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center" Margin="5">GearRatio</TextBlock>
+                    <TextBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding YGearRatio}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5">Run (mA)</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding YRunCurrent}" />
+                    <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="5">Hold %</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding YHoldPercent}" />
+
+                    <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Content="Reverse Direction" IsChecked="{Binding ReverseAltitude}" Margin="5" VerticalAlignment="Center" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+
         <!-- Manual Control Panel - Only Visible When Connected -->
         <Grid Margin="0,5,0,0" Visibility="{Binding Connected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
@@ -49,184 +147,76 @@
                 <s:Single x:Key="Ten">10</s:Single>
             </Grid.Resources>
 
-            <!-- Azimuth (X-Axis) -->
+            <!-- Azimuth Control -->
             <GroupBox Header="Azimuth">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <!-- Settings -->
-                    <Grid>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="{Binding PositionX, StringFormat=N2}" />
+
+                    <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Speed</TextBlock>
-                        <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" SelectedValue="{Binding XSpeed}">
-                            <ComboBox.ItemsSource>
-                                <x:Array Type="{x:Type s:Int32}">
-                                    <s:Int32>100</s:Int32>
-                                    <s:Int32>200</s:Int32>
-                                    <s:Int32>300</s:Int32>
-                                    <s:Int32>400</s:Int32>
-                                    <s:Int32>500</s:Int32>
-                                    <s:Int32>600</s:Int32>
-                                    <s:Int32>700</s:Int32>
-                                    <s:Int32>800</s:Int32>
-                                    <s:Int32>900</s:Int32>
-                                    <s:Int32>1000</s:Int32>
-                                </x:Array>
-                            </ComboBox.ItemsSource>
-                        </ComboBox>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" VerticalAlignment="Center">GearRatio</TextBlock>
-                        <TextBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Text="{Binding XGearRatio}" />
+                        <Button Height="25" Margin="0,0,2.5,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource NegativeDotOne}">-0.1</Button>
+                        <Button Grid.Column="1" Height="25" Margin="2.5,0,0,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource DotOne}">+0.1</Button>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,0,0">Run (mA)</TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0,5,0,0" Text="{Binding XRunCurrent}" />
-                        <TextBlock Grid.Row="1" Grid.Column="2" Margin="5,5,0,0" VerticalAlignment="Center">Hold %</TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="0,5,0,0" Text="{Binding XHoldPercent}" />
+                        <Button Grid.Row="1" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource NegativeOne}">-1</Button>
+                        <Button Grid.Row="1" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource One}">+1</Button>
 
-                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,0,0">Backlash</TextBlock>
-                        <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="0,5,0,0" Text="{Binding XBacklashCompensation}" />
-                        <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Content="Reverse" IsChecked="{Binding ReverseAzimuth}" Margin="5,5,0,0" VerticalAlignment="Center" />
-                    </Grid>
+                        <Button Grid.Row="2" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource NegativeTen}">-10</Button>
+                        <Button Grid.Row="2" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource Ten}">+10</Button>
 
-                    <Separator Grid.Row="1" Margin="0,5" />
-
-                    <!-- Position and Controls -->
-                    <Grid Grid.Row="2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="{Binding PositionX, StringFormat=N2}" />
-
-                        <Grid Grid.Row="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <Button Height="25" Margin="0,0,2.5,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource NegativeDotOne}">-0.1</Button>
-                            <Button Grid.Column="1" Height="25" Margin="2.5,0,0,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource DotOne}">+0.1</Button>
-
-                            <Button Grid.Row="1" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource NegativeOne}">-1</Button>
-                            <Button Grid.Row="1" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource One}">+1</Button>
-
-                            <Button Grid.Row="2" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource NegativeTen}">-10</Button>
-                            <Button Grid.Row="2" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeXCommand}" CommandParameter="{StaticResource Ten}">+10</Button>
-
-                            <TextBox Grid.Row="3" Margin="0,5,2.5,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Text="{Binding TargetPositionX}" />
-                            <Button Grid.Row="3" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding MoveXCommand}">Move</Button>
-                        </Grid>
+                        <TextBox Grid.Row="3" Margin="0,5,2.5,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Text="{Binding TargetPositionX}" />
+                        <Button Grid.Row="3" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding MoveXCommand}">Move</Button>
                     </Grid>
                 </Grid>
             </GroupBox>
 
-            <!-- Altitude (Y-Axis) -->
+            <!-- Altitude Control -->
             <GroupBox Grid.Column="1" Header="Altitude">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <!-- Settings -->
-                    <Grid>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="{Binding PositionY, StringFormat=N2}" />
+
+                    <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Speed</TextBlock>
-                        <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" SelectedItem="{Binding YSpeed}">
-                            <ComboBox.ItemsSource>
-                                <x:Array Type="{x:Type s:Int32}">
-                                    <s:Int32>100</s:Int32>
-                                    <s:Int32>200</s:Int32>
-                                    <s:Int32>300</s:Int32>
-                                    <s:Int32>400</s:Int32>
-                                    <s:Int32>500</s:Int32>
-                                    <s:Int32>600</s:Int32>
-                                    <s:Int32>700</s:Int32>
-                                    <s:Int32>800</s:Int32>
-                                    <s:Int32>900</s:Int32>
-                                    <s:Int32>1000</s:Int32>
-                                </x:Array>
-                            </ComboBox.ItemsSource>
-                        </ComboBox>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Margin="5,0,0,0" VerticalAlignment="Center">GearRatio</TextBlock>
-                        <TextBox Grid.Row="0" Grid.Column="3" VerticalAlignment="Center" Text="{Binding YGearRatio}" />
+                        <Button Height="25" Margin="0,0,2.5,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource NegativeDotOne}">-0.1</Button>
+                        <Button Grid.Column="1" Height="25" Margin="2.5,0,0,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource DotOne}">+0.1</Button>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,5,0,0">Run (mA)</TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="0,5,0,0" Text="{Binding YRunCurrent}" />
-                        <TextBlock Grid.Row="1" Grid.Column="2" Margin="5,5,0,0" VerticalAlignment="Center">Hold %</TextBlock>
-                        <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="0,5,0,0" Text="{Binding YHoldPercent}" />
+                        <Button Grid.Row="1" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource NegativeOne}">-1</Button>
+                        <Button Grid.Row="1" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource One}">+1</Button>
 
-                        <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Reverse" IsChecked="{Binding ReverseAltitude}" Margin="0,5,0,0" VerticalAlignment="Center" />
-                    </Grid>
+                        <Button Grid.Row="2" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource NegativeTen}">-10</Button>
+                        <Button Grid.Row="2" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource Ten}">+10</Button>
 
-                    <Separator Grid.Row="1" Margin="0,5" />
-
-                    <!-- Position and Controls -->
-                    <Grid Grid.Row="2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Text="{Binding PositionY, StringFormat=N2}" />
-
-                        <Grid Grid.Row="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-
-                            <Button Height="25" Margin="0,0,2.5,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource NegativeDotOne}">-0.1</Button>
-                            <Button Grid.Column="1" Height="25" Margin="2.5,0,0,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource DotOne}">+0.1</Button>
-
-                            <Button Grid.Row="1" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource NegativeOne}">-1</Button>
-                            <Button Grid.Row="1" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource One}">+1</Button>
-
-                            <Button Grid.Row="2" Height="25" Margin="0,5,2.5,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource NegativeTen}">-10</Button>
-                            <Button Grid.Row="2" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding NudgeYCommand}" CommandParameter="{StaticResource Ten}">+10</Button>
-
-                            <TextBox Grid.Row="3" Margin="0,5,2.5,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Text="{Binding TargetPositionY}" />
-                            <Button Grid.Row="3" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding MoveYCommand}">Move</Button>
-                        </Grid>
+                        <TextBox Grid.Row="3" Margin="0,5,2.5,0" VerticalAlignment="Center" HorizontalContentAlignment="Right" Text="{Binding TargetPositionY}" />
+                        <Button Grid.Row="3" Grid.Column="1" Height="25" Margin="2.5,5,0,0" Command="{Binding MoveYCommand}">Move</Button>
                     </Grid>
                 </Grid>
             </GroupBox>
