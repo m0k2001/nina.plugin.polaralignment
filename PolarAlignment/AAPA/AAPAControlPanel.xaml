@@ -12,7 +12,7 @@
         <GroupBox Header="Connection">
             <Button>
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource SecondaryBackgroundButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Connected}" Value="False">
                                 <Setter Property="Command" Value="{Binding ConnectCommand}"/>
