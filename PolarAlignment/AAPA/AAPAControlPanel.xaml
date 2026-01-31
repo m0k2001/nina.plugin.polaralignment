@@ -10,37 +10,34 @@
     <StackPanel>
         <!-- Connection Controls - Always Visible -->
         <GroupBox Header="Connection">
-            <StackPanel Orientation="Horizontal">
-                <Button Margin="5">
-                    <Button.Style>
-                        <Style TargetType="Button">
+            <Button>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Connected}" Value="False">
+                                <Setter Property="Command" Value="{Binding ConnectCommand}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Connected}" Value="True">
+                                <Setter Property="Command" Value="{Binding DisconnectCommand}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <TextBlock VerticalAlignment="Center" Foreground="{StaticResource ButtonForegroundBrush}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Connected}" Value="False">
-                                    <Setter Property="Command" Value="{Binding ConnectCommand}"/>
+                                    <Setter Property="Text" Value="Connect"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Connected}" Value="True">
-                                    <Setter Property="Command" Value="{Binding DisconnectCommand}"/>
+                                    <Setter Property="Text" Value="Disconnect"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </Button.Style>
-                    <TextBlock VerticalAlignment="Center" Foreground="{StaticResource ButtonForegroundBrush}">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Connected}" Value="False">
-                                        <Setter Property="Text" Value="Connect"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Connected}" Value="True">
-                                        <Setter Property="Text" Value="Disconnect"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </Button>
-                <TextBlock Text="{Binding Connected, StringFormat='Connected: {0}'}" VerticalAlignment="Center" Margin="10,0,0,0"/>
-            </StackPanel>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Button>
         </GroupBox>
 
         <!-- Automated Adjustments - Always Visible -->
