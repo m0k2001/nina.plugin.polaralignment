@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:avalon="clr-namespace:NINA.Plugins.PolarAlignment.Avalon"
+    xmlns:aapa="clr-namespace:NINA.Plugins.PolarAlignment.AAPA"
     xmlns:behavior="clr-namespace:NINA.WPF.Base.Behaviors;assembly=NINA.WPF.Base"
     xmlns:converters="clr-namespace:NINA.Plugins.PolarAlignment.Converters"
     xmlns:coreconverters="clr-namespace:NINA.Core.Utility.Converters;assembly=NINA.Core"
@@ -302,6 +303,20 @@
                     VerticalAlignment="Center"
                     IsChecked="{Binding UniversalPolarAlignmentVM.UsePolarAlignmentSystem}" />
                 <TextBlock
+                    Grid.Row="17"
+                    Grid.Column="2"
+                    Margin="20,5,0,0"
+                    VerticalAlignment="Center"
+                    Text="Use AAPA System?" />
+                <CheckBox
+                    Grid.Row="17"
+                    Grid.Column="3"
+                    MinWidth="80"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem}" />
+                <TextBlock
                     Grid.Row="18"
                     Margin="0,5,0,0"
                     VerticalAlignment="Center"
@@ -432,6 +447,27 @@
                         <Button Command="{Binding DisconnectCommand}" Visibility="{Binding Connected, Converter={StaticResource BooleanToVisibilityConverter}}">Disconnect</Button>
                     </Grid>
                     <ContentPresenter Grid.Row="1" Content="{Binding UniversalPolarAlignmentVM}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox
+                Grid.Row="2"
+                Margin="0,10,0,0"
+                Header="AAPA Polar Alignment System"
+                Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid DataContext="{Binding UniversalPolarAlignmentAAPAVM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button Command="{Binding ConnectCommand}" Visibility="{Binding Connected, Converter={StaticResource InverseBooleanToVisibilityCollapsedConverter}}">Test Connect</Button>
+                        <Button Command="{Binding DisconnectCommand}" Visibility="{Binding Connected, Converter={StaticResource BooleanToVisibilityConverter}}">Disconnect</Button>
+                    </Grid>
+                    <ContentPresenter Grid.Row="1" Content="{Binding UniversalPolarAlignmentAAPAVM}" />
                 </Grid>
             </GroupBox>
 
@@ -1617,5 +1653,9 @@
                 </Grid>
             </GroupBox>
         </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type aapa:UniversalPolarAlignmentAAPAVM}">
+        <aapa:AAPAControlPanel />
     </DataTemplate>
 </ResourceDictionary>
