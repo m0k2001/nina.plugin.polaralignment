@@ -12,7 +12,7 @@
         <GroupBox Header="Connection">
             <Button HorizontalAlignment="Left" MinWidth="120">
                 <Button.Style>
-                    <Style TargetType="Button">
+                    <Style TargetType="Button" BasedOn="{StaticResource StandardButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Connected}" Value="False">
                                 <Setter Property="Command" Value="{Binding ConnectCommand}"/>
