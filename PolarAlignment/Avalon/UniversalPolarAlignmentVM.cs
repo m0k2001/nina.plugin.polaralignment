@@ -285,6 +285,7 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
             var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(300));
             try {
                 while (await timer.WaitForNextTickAsync(token) && !token.IsCancellationRequested) {
+                    await upa.RefreshStatus(token);
                     PositionX = upa.XPosition1;
                     PositionY = upa.YPosition1;
                 }

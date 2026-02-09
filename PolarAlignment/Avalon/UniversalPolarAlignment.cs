@@ -178,6 +178,15 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
             }
         }
 
+        public async Task RefreshStatus(CancellationToken token) {
+            await semaphore.WaitAsync(token);
+            try {
+                UpdateStatus();
+            } finally {
+                semaphore.Release();
+            }
+        }
+
         [GeneratedRegex(@"<(?<status>\w+)\|MPos:(?<x>[+-]?\d+(\.\d+)?),(?<y>[+-]?\d+(\.\d+)?),(?<z>[+-]?\d+(\.\d+)?)\|")]
         private static partial Regex StatusRegex();
 

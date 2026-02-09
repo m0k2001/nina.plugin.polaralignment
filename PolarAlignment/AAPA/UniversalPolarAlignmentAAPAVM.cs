@@ -262,6 +262,9 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                 await ClearBacklash(lastDirection, currentDirection, token);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
@@ -277,6 +280,9 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                 await upa.MoveRelative(UniversalPolarAlignmentAAPA.Axis.YAxis, YSpeed, position, token).ConfigureAwait(false);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
@@ -302,6 +308,9 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                 await ClearBacklash(lastDirection, currentDirection, token);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
@@ -330,6 +339,9 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                 await upa.MoveAbsolute(UniversalPolarAlignmentAAPA.Axis.YAxis, YSpeed, target, token).ConfigureAwait(false);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
@@ -341,6 +353,7 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
             var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(300));
             try {
                 while (await timer.WaitForNextTickAsync(token) && !token.IsCancellationRequested) {
+                    await upa.RefreshStatus(token);
                     PositionX = upa.XPosition1;
                     PositionY = upa.YPosition1;
                 }

@@ -21,11 +21,12 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                     BaudRate = 115200,
                     Parity = Parity.None,
                     DataBits = 8,
-                    StopBits = StopBits.One
+                    StopBits = StopBits.One,
+                    NewLine = "\n"  // Arduino uses LF only, not CRLF
                 };
 
-                serialPortToTest.ReadTimeout = 1000;
-                serialPortToTest.WriteTimeout = 1000;
+                serialPortToTest.ReadTimeout = 300;  // Reduced from 1000ms for faster scanning
+                serialPortToTest.WriteTimeout = 300;
 
                 try {
                     serialPortToTest.Open();
@@ -112,12 +113,40 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                 }
                 
                 var command = $"$J=G91G21{axisCommand}{(position * gearRatio).ToString(CultureInfo.InvariantCulture)}F{speed.ToString(CultureInfo.InvariantCulture)}";
+                Logger.Info($"Sending command: {command}");
                 port.WriteLine(command);
                 var ok = port.ReadLine();
+                Logger.Info($"Response: {ok}");
 
+                var startPos = checkProperty();
+                Logger.Info($"Starting position: {startPos}, Target: {target}, Difference: {Math.Abs(startPos - target)}");
+
+                var timeout = TimeSpan.FromSeconds(30);
+                var startTime = DateTime.Now;
+                var lastPos = startPos;
+                var stuckCount = 0;
 
                 while (Math.Abs(checkProperty() - target) > 0.01f) {
                     UpdateStatus();
+                    var currentPos = checkProperty();
+                    Logger.Info($"Current position: {currentPos}, waiting for target: {target}");
+
+                    // Check if motor is stuck (position not changing)
+                    if (Math.Abs(currentPos - lastPos) < 0.01f) {
+                        stuckCount++;
+                        if (stuckCount > 5) {  // Stuck for 5 iterations (1.5 seconds)
+                            throw new TimeoutException($"Motor appears stuck at position {currentPos}. Target was {target}. Check hardware and endstops.");
+                        }
+                    } else {
+                        stuckCount = 0;  // Reset if motor is moving
+                    }
+                    lastPos = currentPos;
+
+                    // Check overall timeout
+                    if (DateTime.Now - startTime > timeout) {
+                        throw new TimeoutException($"Movement timeout after {timeout.TotalSeconds}s. Current: {currentPos}, Target: {target}");
+                    }
+
                     await Task.Delay(300, token);
                 }
             } finally {
@@ -149,8 +178,10 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                     case Axis.ZAxis: ZLastDirection = position - ZPosition1 >= 0 ? LastDirection.Positive : LastDirection.Negative; break;
                 }
                 var command = $"$J=G53{axisCommand}{target.ToString(CultureInfo.InvariantCulture)}F{speed.ToString(CultureInfo.InvariantCulture)}";
+                Logger.Info($"Sending command: {command}");
                 port.WriteLine(command);
                 var ok = port.ReadLine();
+                Logger.Info($"Response: {ok}");
 
                 Func<float> checkProperty = axis switch {
                     Axis.XAxis => () => XPosition,
@@ -158,8 +189,35 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                     Axis.ZAxis => () => ZPosition,
                     _ => throw new ArgumentException("Invalid Axis"),
                 };
+                var startPos = checkProperty();
+                Logger.Info($"Starting position: {startPos}, Target: {target}, Difference: {Math.Abs(startPos - target)}");
+
+                var timeout = TimeSpan.FromSeconds(30);
+                var startTime = DateTime.Now;
+                var lastPos = startPos;
+                var stuckCount = 0;
+
                 while (Math.Abs(checkProperty() - target) > 0.01f) {
                     UpdateStatus();
+                    var currentPos = checkProperty();
+                    Logger.Info($"Current position: {currentPos}, waiting for target: {target}");
+
+                    // Check if motor is stuck (position not changing)
+                    if (Math.Abs(currentPos - lastPos) < 0.01f) {
+                        stuckCount++;
+                        if (stuckCount > 5) {  // Stuck for 5 iterations (1.5 seconds)
+                            throw new TimeoutException($"Motor appears stuck at position {currentPos}. Target was {target}. Check hardware and endstops.");
+                        }
+                    } else {
+                        stuckCount = 0;  // Reset if motor is moving
+                    }
+                    lastPos = currentPos;
+
+                    // Check overall timeout
+                    if (DateTime.Now - startTime > timeout) {
+                        throw new TimeoutException($"Movement timeout after {timeout.TotalSeconds}s. Current: {currentPos}, Target: {target}");
+                    }
+
                     await Task.Delay(300, token);
                 }
             } finally {
@@ -170,7 +228,8 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
         private void UpdateStatus() {
             port.WriteLine("?");
             var status = port.ReadLine();
-            port.ReadLine();
+            var ok = port.ReadLine();
+            Logger.Info($"DEBUG: Received status='{status}', ok='{ok}'");
 
             var match = StatusRegex().Match(status);
             if (match.Success) {
@@ -178,8 +237,18 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
                 XPosition = float.Parse(match.Groups["x"].Value, CultureInfo.InvariantCulture);
                 YPosition = float.Parse(match.Groups["y"].Value, CultureInfo.InvariantCulture);
                 ZPosition = float.Parse(match.Groups["z"].Value, CultureInfo.InvariantCulture);
+                Logger.Debug($"Status: {Status}, X={XPosition}, Y={YPosition}, Z={ZPosition}");
             } else {
                 Logger.Error($"Failed to parse UPA status: {status}");
+            }
+        }
+
+        public async Task RefreshStatus(CancellationToken token) {
+            await semaphore.WaitAsync(token);
+            try {
+                UpdateStatus();
+            } finally {
+                semaphore.Release();
             }
         }
 
@@ -219,7 +288,7 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
             }
         }
 
-        [GeneratedRegex(@"<(?<status>\w+)\|MPos:(?<x>[+-]?\d+(\.\d+)?),(?<y>[+-]?\d+(\.\d+)?),(?<z>[+-]?\d+(\.\d+)?)\|")]
+        [GeneratedRegex(@"<(?<status>\w+)\|MPos:(?<x>[+-]?\d+(\.\d+)?),(?<y>[+-]?\d+(\.\d+)?),(?<z>[+-]?\d+(\.\d+)?)(?:\|T:(?<target>[+-]?\d+),R:(?<running>[01]),E:(?<endstop>[01]),S:(?<speed>[+-]?\d+(\.\d+)?))?\|>")]
         private static partial Regex StatusRegex();
 
         public void Dispose() => port?.Dispose();
