@@ -358,5 +358,149 @@ namespace NINA.Plugins.PolarAlignment.Properties {
                 this["AutoPause"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseAAPAPolarAlignmentSystem {
+            get {
+                return ((bool)(this["UseAAPAPolarAlignmentSystem"]));
+            }
+            set {
+                this["UseAAPAPolarAlignmentSystem"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float AAPAXGearRatio {
+            get {
+                return ((float)(this["AAPAXGearRatio"]));
+            }
+            set {
+                this["AAPAXGearRatio"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public int AAPAXSpeed {
+            get {
+                return ((int)(this["AAPAXSpeed"]));
+            }
+            set {
+                this["AAPAXSpeed"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float AAPAYGearRatio {
+            get {
+                return ((float)(this["AAPAYGearRatio"]));
+            }
+            set {
+                this["AAPAYGearRatio"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public int AAPAYSpeed {
+            get {
+                return ((int)(this["AAPAYSpeed"]));
+            }
+            set {
+                this["AAPAYSpeed"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float AAPAXBacklashCompensation {
+            get {
+                return ((float)(this["AAPAXBacklashCompensation"]));
+            }
+            set {
+                this["AAPAXBacklashCompensation"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AAPAReverseAzimuth {
+            get {
+                return ((bool)(this["AAPAReverseAzimuth"]));
+            }
+            set {
+                this["AAPAReverseAzimuth"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AAPAReverseAltitude {
+            get {
+                return ((bool)(this["AAPAReverseAltitude"]));
+            }
+            set {
+                this["AAPAReverseAltitude"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        public int AAPAXRunCurrent {
+            get {
+                return ((int)(this["AAPAXRunCurrent"]));
+            }
+            set {
+                this["AAPAXRunCurrent"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
+        public int AAPAYRunCurrent {
+            get {
+                return ((int)(this["AAPAYRunCurrent"]));
+            }
+            set {
+                this["AAPAYRunCurrent"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int AAPAXHoldPercent {
+            get {
+                return ((int)(this["AAPAXHoldPercent"]));
+            }
+            set {
+                this["AAPAXHoldPercent"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int AAPAYHoldPercent {
+            get {
+                return ((int)(this["AAPAYHoldPercent"]));
+            }
+            set {
+                this["AAPAYHoldPercent"] = value;
+            }
+        }
     }
 }

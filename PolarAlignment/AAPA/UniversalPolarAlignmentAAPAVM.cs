@@ -1,24 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Profile.Interfaces;
 using NINA.WPF.Base.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media.Animation;
-using static NINA.Plugins.PolarAlignment.Avalon.UniversalPolarAlignment;
+using static NINA.Plugins.PolarAlignment.AAPA.UniversalPolarAlignmentAAPA;
 
-namespace NINA.Plugins.PolarAlignment.Avalon {
-    public partial class UniversalPolarAlignmentVM : BaseVM {
-        private UniversalPolarAlignment upa;
+namespace NINA.Plugins.PolarAlignment.AAPA {
+    public partial class UniversalPolarAlignmentAAPAVM : BaseVM {
+        private UniversalPolarAlignmentAAPA upa;
 
-        public UniversalPolarAlignmentVM(IProfileService profileService) : base(profileService) {
+        public UniversalPolarAlignmentAAPAVM(IProfileService profileService) : base(profileService) {
             IsNotMoving = true;
         }
 
@@ -39,10 +35,10 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
 
         public bool UsePolarAlignmentSystem {
             get {
-                return Properties.Settings.Default.UseAvalonPolarAlignmentSystem;
+                return Properties.Settings.Default.UseAAPAPolarAlignmentSystem;
             }
             set {
-                Properties.Settings.Default.UseAvalonPolarAlignmentSystem = value;
+                Properties.Settings.Default.UseAAPAPolarAlignmentSystem = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
@@ -69,15 +65,17 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
                 RaisePropertyChanged();
             }
         }
-        
+
         public float XGearRatio {
             get {
-                return Properties.Settings.Default.AvalonXGearRatio;
+                return Properties.Settings.Default.AAPAXGearRatio;
             }
             set {
                 if (value < 1) { value = 1; }
-                Properties.Settings.Default.AvalonXGearRatio = value;
-                upa.XGearRatio = value;
+                Properties.Settings.Default.AAPAXGearRatio = value;
+                if (upa != null) {
+                    upa.XGearRatio = value;
+                }
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(PositionX));
@@ -86,10 +84,10 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
 
         public int XSpeed {
             get {
-                return Properties.Settings.Default.AvalonXSpeed;
+                return Properties.Settings.Default.AAPAXSpeed;
             }
             set {
-                Properties.Settings.Default.AvalonXSpeed = value;
+                Properties.Settings.Default.AAPAXSpeed = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
@@ -97,12 +95,14 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
 
         public float YGearRatio {
             get {
-                return Properties.Settings.Default.AvalonYGearRatio;
+                return Properties.Settings.Default.AAPAYGearRatio;
             }
             set {
                 if(value < 1) { value = 1; }
-                Properties.Settings.Default.AvalonYGearRatio = value;
-                upa.YGearRatio = value;
+                Properties.Settings.Default.AAPAYGearRatio = value;
+                if (upa != null) {
+                    upa.YGearRatio = value;
+                }
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(PositionY));
@@ -111,10 +111,10 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
 
         public int YSpeed {
             get {
-                return Properties.Settings.Default.AvalonYSpeed;
+                return Properties.Settings.Default.AAPAYSpeed;
             }
             set {
-                Properties.Settings.Default.AvalonYSpeed = value;
+                Properties.Settings.Default.AAPAYSpeed = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
@@ -122,10 +122,10 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
 
         public bool ReverseAzimuth {
             get {
-                return Properties.Settings.Default.AvalonReverseAzimuth;
+                return Properties.Settings.Default.AAPAReverseAzimuth;
             }
             set {
-                Properties.Settings.Default.AvalonReverseAzimuth = value;
+                Properties.Settings.Default.AAPAReverseAzimuth = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
@@ -133,10 +133,10 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
 
         public bool ReverseAltitude {
             get {
-                return Properties.Settings.Default.AvalonReverseAltitude;
+                return Properties.Settings.Default.AAPAReverseAltitude;
             }
             set {
-                Properties.Settings.Default.AvalonReverseAltitude = value;
+                Properties.Settings.Default.AAPAReverseAltitude = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
@@ -144,12 +144,68 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
 
         public float XBacklashCompensation {
             get {
-                return Properties.Settings.Default.AvalonXBacklashCompensation;
+                return Properties.Settings.Default.AAPAXBacklashCompensation;
             }
             set {
-                Properties.Settings.Default.AvalonXBacklashCompensation = value;
+                Properties.Settings.Default.AAPAXBacklashCompensation = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
+            }
+        }
+
+        public int XRunCurrent {
+            get {
+                return Properties.Settings.Default.AAPAXRunCurrent;
+            }
+            set {
+                Properties.Settings.Default.AAPAXRunCurrent = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+                if (upa?.Connected == true) {
+                    upa.SetXRunCurrent(value);
+                }
+            }
+        }
+
+        public int YRunCurrent {
+            get {
+                return Properties.Settings.Default.AAPAYRunCurrent;
+            }
+            set {
+                Properties.Settings.Default.AAPAYRunCurrent = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+                if (upa?.Connected == true) {
+                    upa.SetYRunCurrent(value);
+                }
+            }
+        }
+
+        public int XHoldPercent {
+            get {
+                return Properties.Settings.Default.AAPAXHoldPercent;
+            }
+            set {
+                Properties.Settings.Default.AAPAXHoldPercent = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+                if (upa?.Connected == true) {
+                    upa.SetXHoldPercent(value);
+                }
+            }
+        }
+
+        public int YHoldPercent {
+            get {
+                return Properties.Settings.Default.AAPAYHoldPercent;
+            }
+            set {
+                Properties.Settings.Default.AAPAYHoldPercent = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+                if (upa?.Connected == true) {
+                    upa.SetYHoldPercent(value);
+                }
             }
         }
 
@@ -169,13 +225,13 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
                 try {
                     await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
 
-                    upa = new UniversalPolarAlignment();
+                    upa = new UniversalPolarAlignmentAAPA();
                     _ = StartPoll();
                     Connected = true;
-                    Notification.ShowInformation("Successfully connected to Avalon Polar Alignment System");
+                    Notification.ShowInformation("Successfully connected to AAPA System");
                 } catch (Exception ex) {
                     Logger.Error(ex);
-                    Notification.ShowError("Unable to connect to Avalon Polar Alignment System");
+                    Notification.ShowError("Unable to connect to AAPA System");
                 }
             });
         }
@@ -186,11 +242,11 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
             Connected = false;
             try {
                 pollCts?.Cancel();
-                upa.Dispose();                
+                upa.Dispose();
             } catch (Exception ex) {
                 Logger.Error(ex);
             }
-            Notification.ShowInformation("Disconnected from Avalon Polar Alignment System");
+            Notification.ShowInformation("Disconnected from AAPA System");
         }
 
         [RelayCommand(CanExecute = (nameof(IsNotMoving)))]
@@ -199,13 +255,16 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
                 if (ReverseAzimuth) { position = position * -1; }
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = false);
 
-                Logger.Info($"Nudging UPA along X axis by {position}");
+                Logger.Info($"Nudging AAPA along X axis by {position}");
                 var lastDirection = upa.XLastDirection;
-                await upa.MoveRelative(UniversalPolarAlignment.Axis.XAxis, XSpeed, position, token).ConfigureAwait(false);
+                await upa.MoveRelative(UniversalPolarAlignmentAAPA.Axis.XAxis, XSpeed, position, token).ConfigureAwait(false);
                 var currentDirection = upa.XLastDirection;
                 await ClearBacklash(lastDirection, currentDirection, token);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
@@ -217,10 +276,13 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
                 if (ReverseAltitude) { position = position * -1; }
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = false);
 
-                Logger.Info($"Nudging UPA along Y axis by {position}");
-                await upa.MoveRelative(UniversalPolarAlignment.Axis.YAxis, YSpeed, position, token).ConfigureAwait(false);
+                Logger.Info($"Nudging AAPA along Y axis by {position}");
+                await upa.MoveRelative(UniversalPolarAlignmentAAPA.Axis.YAxis, YSpeed, position, token).ConfigureAwait(false);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
@@ -238,14 +300,17 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
                 var target = TargetPositionX;
                 if(ReverseAzimuth) { target = target * -1; }
 
-                Logger.Info($"Moving UPA along X axis to {target}");
+                Logger.Info($"Moving AAPA along X axis to {target}");
                 var lastDirection = upa.XLastDirection;
-                
-                await upa.MoveAbsolute(UniversalPolarAlignment.Axis.XAxis, XSpeed, target, token).ConfigureAwait(false);
+
+                await upa.MoveAbsolute(UniversalPolarAlignmentAAPA.Axis.XAxis, XSpeed, target, token).ConfigureAwait(false);
                 var currentDirection = upa.XLastDirection;
                 await ClearBacklash(lastDirection, currentDirection, token);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
@@ -255,10 +320,10 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
             if (lastDirection != currentDirection) {
                 if (Math.Abs(XBacklashCompensation) > 0) {
                     Logger.Info("Direction changed. Clearing backlash");
-                    await upa.MoveRelative(UniversalPolarAlignment.Axis.XAxis, XSpeed, -XBacklashCompensation, token).ConfigureAwait(false);
-                    await upa.MoveRelative(UniversalPolarAlignment.Axis.XAxis, XSpeed, XBacklashCompensation, token).ConfigureAwait(false);
+                    await upa.MoveRelative(UniversalPolarAlignmentAAPA.Axis.XAxis, XSpeed, -XBacklashCompensation, token).ConfigureAwait(false);
+                    await upa.MoveRelative(UniversalPolarAlignmentAAPA.Axis.XAxis, XSpeed, XBacklashCompensation, token).ConfigureAwait(false);
                 }
-            } 
+            }
         }
 
 
@@ -268,12 +333,15 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = false);
 
                 var target = TargetPositionY;
-                if (ReverseAzimuth) { target = target * -1; }
+                if (ReverseAltitude) { target = target * -1; }
 
-                Logger.Info($"Moving UPA along Y axis to {target}");
-                await upa.MoveAbsolute(UniversalPolarAlignment.Axis.YAxis, YSpeed, target, token).ConfigureAwait(false);
+                Logger.Info($"Moving AAPA along Y axis to {target}");
+                await upa.MoveAbsolute(UniversalPolarAlignmentAAPA.Axis.YAxis, YSpeed, target, token).ConfigureAwait(false);
             } catch (Exception ex) {
                 Logger.Error(ex);
+                if (ex is TimeoutException) {
+                    Notification.ShowError($"Movement timeout: {ex.Message}");
+                }
             } finally {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
