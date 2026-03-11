@@ -24,6 +24,11 @@ namespace NINA.Plugins.PolarAlignment {
         public static UniversalPolarAlignmentVM UniversalPolarAlignmentVM { get; private set; }
         public static UniversalPolarAlignmentAAPAVM UniversalPolarAlignmentAAPAVM { get; private set; }
 
+        public static IPolarAlignmentSystemVM ActiveAlignmentSystemVM =>
+            UniversalPolarAlignmentVM?.UsePolarAlignmentSystem == true ? UniversalPolarAlignmentVM
+            : UniversalPolarAlignmentAAPAVM?.UsePolarAlignmentSystem == true ? UniversalPolarAlignmentAAPAVM
+            : null;
+
         public static string PluginId { get; private set; }
 
         [ImportingConstructor]

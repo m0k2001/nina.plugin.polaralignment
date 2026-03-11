@@ -8,57 +8,8 @@
              mc:Ignorable="d">
 
     <StackPanel>
-        <!-- Connection Controls - Always Visible -->
-        <GroupBox Header="Connection">
-            <Button HorizontalAlignment="Left" MinWidth="120">
-                <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource StandardButton}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Connected}" Value="False">
-                                <Setter Property="Command" Value="{Binding ConnectCommand}"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Connected}" Value="True">
-                                <Setter Property="Command" Value="{Binding DisconnectCommand}"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-                <TextBlock VerticalAlignment="Center" Foreground="{StaticResource ButtonForegroundBrush}">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Connected}" Value="False">
-                                    <Setter Property="Text" Value="Connect"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Connected}" Value="True">
-                                    <Setter Property="Text" Value="Disconnect"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-            </Button>
-        </GroupBox>
-
-        <!-- Automated Adjustments - Always Visible -->
-        <GroupBox Header="Automated Adjustments" Margin="0,5,0,0">
-            <StackPanel>
-                <CheckBox Content="Enable Automated Adjustments" IsChecked="{Binding DoAutomatedAdjustments}" Margin="5" IsEnabled="{Binding Connected}"/>
-                <Grid Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="Settle Time:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                    <TextBox Grid.Column="1" Text="{Binding AutomatedAdjustmentSettleTime}" VerticalAlignment="Center"/>
-                    <TextBlock Grid.Column="2" Text="seconds" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                </Grid>
-            </StackPanel>
-        </GroupBox>
-
-        <!-- Motor Settings - Always Visible -->
-        <Grid Margin="0,5,0,0">
+        <!-- Motor Settings -->
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -68,7 +19,6 @@
             <GroupBox Header="Azimuth Motor Settings">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -103,10 +53,6 @@
                     <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding XRunCurrent}" />
                     <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="5">Hold %</TextBlock>
                     <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding XHoldPercent}" />
-
-                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5">Backlash</TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding XBacklashCompensation}" />
-                    <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Content="Reverse Direction" IsChecked="{Binding ReverseAzimuth}" Margin="5" VerticalAlignment="Center" />
                 </Grid>
             </GroupBox>
 
@@ -114,7 +60,6 @@
             <GroupBox Grid.Column="1" Header="Altitude Motor Settings">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -126,7 +71,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5">Speed</TextBlock>
-                    <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" SelectedItem="{Binding YSpeed}">
+                    <ComboBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="5" SelectedValue="{Binding YSpeed}">
                         <ComboBox.ItemsSource>
                             <x:Array Type="{x:Type s:Int32}">
                                 <s:Int32>100</s:Int32>
@@ -149,8 +94,6 @@
                     <TextBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="5" Text="{Binding YRunCurrent}" />
                     <TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Margin="5">Hold %</TextBlock>
                     <TextBox Grid.Row="1" Grid.Column="3" VerticalAlignment="Center" Margin="5" Text="{Binding YHoldPercent}" />
-
-                    <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Content="Reverse Direction" IsChecked="{Binding ReverseAltitude}" Margin="5" VerticalAlignment="Center" />
                 </Grid>
             </GroupBox>
         </Grid>

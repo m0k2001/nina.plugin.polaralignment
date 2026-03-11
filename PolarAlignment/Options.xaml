@@ -417,6 +417,109 @@
                         Text="Make sure to set your gear ratio to achieve 1 arcminute per step for each axis!"
                         Visibility="{Binding UniversalPolarAlignmentVM.DoAutomatedAdjustments, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>
+                <!-- AAPA common settings (same rows, mutually exclusive with Avalon) -->
+                <TextBlock
+                    Grid.Row="19"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Text="Reverse Azimuth Axis?"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <CheckBox
+                    Grid.Row="19"
+                    Grid.Column="1"
+                    MinWidth="80"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding UniversalPolarAlignmentAAPAVM.ReverseAzimuth}"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock
+                    Grid.Row="20"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Text="Reverse Altitude Axis?"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <CheckBox
+                    Grid.Row="20"
+                    Grid.Column="1"
+                    MinWidth="80"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding UniversalPolarAlignmentAAPAVM.ReverseAltitude}"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock
+                    Grid.Row="21"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Text="Azimuth backlash compensation"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ninactrl:UnitTextBox
+                    Grid.Row="21"
+                    Grid.Column="1"
+                    MinWidth="80"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Text="{Binding UniversalPolarAlignmentAAPAVM.XBacklashCompensation}"
+                    Unit="steps"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock
+                    Grid.Row="22"
+                    Margin="0,5,0,0"
+                    VerticalAlignment="Center"
+                    Text="Do automated adjustments?"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <StackPanel
+                    Grid.Row="22"
+                    Grid.Column="1"
+                    Orientation="Horizontal">
+                    <CheckBox
+                        MinWidth="80"
+                        Margin="0,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding UniversalPolarAlignmentAAPAVM.DoAutomatedAdjustments}"
+                        Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Grid Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock
+                            Margin="5,5,0,0"
+                            VerticalAlignment="Center"
+                            FontStyle="Italic"
+                            Text="This option is under test and experimental"
+                            Visibility="{Binding UniversalPolarAlignmentAAPAVM.DoAutomatedAdjustments, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </StackPanel>
+                <Grid Grid.Row="23" Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock
+                        Margin="0,5,0,0"
+                        VerticalAlignment="Center"
+                        Text="Automated adjustment settle time"
+                        Visibility="{Binding UniversalPolarAlignmentAAPAVM.DoAutomatedAdjustments, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
+                <Grid
+                    Grid.Row="23"
+                    Grid.Column="1"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ninactrl:UnitTextBox
+                        MinWidth="80"
+                        Margin="5,5,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Text="{Binding UniversalPolarAlignmentAAPAVM.AutomatedAdjustmentSettleTime}"
+                        Unit="s"
+                        Visibility="{Binding UniversalPolarAlignmentAAPAVM.DoAutomatedAdjustments, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
+                <Grid
+                    Grid.Row="24"
+                    Grid.ColumnSpan="2"
+                    Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock
+                        Margin="0,5,0,0"
+                        FontStyle="Italic"
+                        Text="Make sure to set your gear ratio to achieve 1 arcminute per step for each axis!"
+                        Visibility="{Binding UniversalPolarAlignmentAAPAVM.DoAutomatedAdjustments, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
                 <Button
                     Grid.Row="25"
                     Margin="0,20,0,0"
@@ -454,7 +557,19 @@
                 Header="AAPA Polar Alignment System"
                 Visibility="{Binding UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid Margin="0,10,0,0">
-                    <ContentPresenter Content="{Binding UniversalPolarAlignmentAAPAVM}" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid DataContext="{Binding UniversalPolarAlignmentAAPAVM}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button Command="{Binding ConnectCommand}" Visibility="{Binding Connected, Converter={StaticResource InverseBooleanToVisibilityCollapsedConverter}}">Test Connect</Button>
+                        <Button Command="{Binding DisconnectCommand}" Visibility="{Binding Connected, Converter={StaticResource BooleanToVisibilityConverter}}">Disconnect</Button>
+                    </Grid>
+                    <ContentPresenter Grid.Row="1" Content="{Binding UniversalPolarAlignmentAAPAVM}" />
                 </Grid>
             </GroupBox>
 

@@ -52,6 +52,7 @@ namespace NINA.Plugins.PolarAlignment {
 
         public UniversalPolarAlignmentVM UniversalPolarAlignmentVM => PolarAlignmentPlugin.UniversalPolarAlignmentVM;
         public UniversalPolarAlignmentAAPAVM UniversalPolarAlignmentAAPAVM => PolarAlignmentPlugin.UniversalPolarAlignmentAAPAVM;
+        public IPolarAlignmentSystemVM ActiveAlignmentSystemVM => PolarAlignmentPlugin.ActiveAlignmentSystemVM;
 
         public void ActivateFirstStep() {
             lastMovement = null;
@@ -144,11 +145,8 @@ namespace NINA.Plugins.PolarAlignment {
 
         private Movement lastMovement = null;
         public async Task MoveCloser(IProgress<ApplicationStatus> progress, CancellationToken token) {
-            // Check which system is enabled
-            bool useAvalon = UniversalPolarAlignmentVM.UsePolarAlignmentSystem && UniversalPolarAlignmentVM.DoAutomatedAdjustments;
-            bool useAAPA = UniversalPolarAlignmentAAPAVM.UsePolarAlignmentSystem && UniversalPolarAlignmentAAPAVM.DoAutomatedAdjustments;
-
-            if (!useAvalon && !useAAPA) { return; }
+            var activeSystem = ActiveAlignmentSystemVM;
+            if (activeSystem == null || !activeSystem.UsePolarAlignmentSystem || !activeSystem.DoAutomatedAdjustments) { return; }
 
             var az = PolarErrorDetermination.CurrentMountAxisAzimuthError;
             var alt = PolarErrorDetermination.CurrentMountAxisAltitudeError;
@@ -159,13 +157,11 @@ namespace NINA.Plugins.PolarAlignment {
                 if (lastMovement?.Altitude == 0) {
                     if (lastMovement.Azimuth != 0 && Math.Abs(az.Degree) > Math.Abs(lastMovement.AzimuthErrorBeforeMovement * 1.15d)) {
                         Logger.Info($"Reversing x axis movement as azimuth error is worse than before. Before: {lastMovement.AzimuthErrorBeforeMovement} - After: {az.Degree}");
-                        // Axis is reversed
                         azimuthSign = -1f * lastMovement.AzimuthSign;
                     }
                 } else if (lastMovement?.Azimuth == 0) {
                     if (lastMovement.Altitude != 0 && Math.Abs(alt.Degree) > Math.Abs(lastMovement.AltitudeErrorBeforeMovement * 1.15d)) {
                         Logger.Info($"Reversing y axis movement as altitude error is worse than before. Before: {lastMovement.AltitudeErrorBeforeMovement} - After: {alt.Degree}");
-                        // Axis is reversed
                         altitudeSign = -1f * lastMovement.AltitudeSign;
                     }
                 }
@@ -175,27 +171,16 @@ namespace NINA.Plugins.PolarAlignment {
             if (xGreaterThanY) {
                 float azAdjustment = (float)az.ArcMinutes * azimuthSign * 0.75f;
                 progress?.Report(new ApplicationStatus() { Status = $"Nudging along X axis by {Math.Round(azAdjustment, 2)}" });
-
-                if (useAvalon) {
-                    await UniversalPolarAlignmentVM.NudgeX(azAdjustment, token);
-                } else if (useAAPA) {
-                    await UniversalPolarAlignmentAAPAVM.NudgeX(azAdjustment, token);
-                }
+                await activeSystem.NudgeX(azAdjustment, token);
                 lastMovement = new Movement(azAdjustment, 0, azimuthSign, lastMovement?.AltitudeSign ?? 1f, az.Degree, alt.Degree);
             } else {
                 float altAdjustment = (float)alt.ArcMinutes * altitudeSign * 0.75f;
                 progress?.Report(new ApplicationStatus() { Status = $"Nudging along Y axis by {Math.Round(altAdjustment, 2)}" });
-
-                if (useAvalon) {
-                    await UniversalPolarAlignmentVM.NudgeY(altAdjustment, token);
-                } else if (useAAPA) {
-                    await UniversalPolarAlignmentAAPAVM.NudgeY(altAdjustment, token);
-                }
+                await activeSystem.NudgeY(altAdjustment, token);
                 lastMovement = new Movement(0, altAdjustment, lastMovement?.AzimuthSign ?? 1f, altitudeSign, az.Degree, alt.Degree);
             }
 
-            var settleTime = useAvalon ? UniversalPolarAlignmentVM.AutomatedAdjustmentSettleTime : UniversalPolarAlignmentAAPAVM.AutomatedAdjustmentSettleTime;
-            await CoreUtil.Wait(TimeSpan.FromSeconds(settleTime), token, progress, "Settling");
+            await CoreUtil.Wait(TimeSpan.FromSeconds(activeSystem.AutomatedAdjustmentSettleTime), token, progress, "Settling");
         }
 
         private void CalculateErrorDetails() {
@@ -374,10 +359,7 @@ namespace NINA.Plugins.PolarAlignment {
                 logger?.Dispose();
             } catch { }
             try {
-                UniversalPolarAlignmentVM.Disconnect();
-            } catch { }
-            try {
-                UniversalPolarAlignmentAAPAVM.Disconnect();
+                ActiveAlignmentSystemVM?.Disconnect();
             } catch { }
         }
 
