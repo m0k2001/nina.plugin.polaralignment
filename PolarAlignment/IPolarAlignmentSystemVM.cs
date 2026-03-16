@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 namespace NINA.Plugins.PolarAlignment {
     public interface IPolarAlignmentSystemVM {
         bool Connected { get; }
-        bool UsePolarAlignmentSystem { get; set; }
         bool DoAutomatedAdjustments { get; set; }
         double AutomatedAdjustmentSettleTime { get; set; }
 

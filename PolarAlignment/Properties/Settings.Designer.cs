@@ -370,6 +370,18 @@ namespace NINA.Plugins.PolarAlignment.Properties {
                 this["UseAAPAPolarAlignmentSystem"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("None")]
+        public string SelectedPolarAlignmentSystem {
+            get {
+                return ((string)(this["SelectedPolarAlignmentSystem"]));
+            }
+            set {
+                this["SelectedPolarAlignmentSystem"] = value;
+            }
+        }
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

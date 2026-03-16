@@ -3,6 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace NINA.Plugins.PolarAlignment {
+    public enum PolarAlignmentSystemType {
+        None,
+        UPAS,
+        AAPA
+    }
+
     public enum Axis {
         XAxis,
         YAxis,

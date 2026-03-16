@@ -35,7 +35,6 @@ namespace NINA.Plugins.PolarAlignment {
         [ObservableProperty]
         private float targetPositionY;
 
-        public abstract bool UsePolarAlignmentSystem { get; set; }
         public abstract bool DoAutomatedAdjustments { get; set; }
         public abstract double AutomatedAdjustmentSettleTime { get; set; }
         public abstract float XGearRatio { get; set; }

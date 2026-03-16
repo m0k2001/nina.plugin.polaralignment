@@ -25,9 +25,34 @@ namespace NINA.Plugins.PolarAlignment {
         public static UniversalPolarAlignmentAAPAVM UniversalPolarAlignmentAAPAVM { get; private set; }
 
         public static IPolarAlignmentSystemVM ActiveAlignmentSystemVM =>
-            UniversalPolarAlignmentVM?.UsePolarAlignmentSystem == true ? UniversalPolarAlignmentVM
-            : UniversalPolarAlignmentAAPAVM?.UsePolarAlignmentSystem == true ? UniversalPolarAlignmentAAPAVM
-            : null;
+            Properties.Settings.Default.SelectedPolarAlignmentSystem switch {
+                "UPAS" => UniversalPolarAlignmentVM,
+                "AAPA" => UniversalPolarAlignmentAAPAVM,
+                _ => null
+            };
+
+        public PolarAlignmentSystemType SelectedPolarAlignmentSystem {
+            get {
+                return Enum.TryParse<PolarAlignmentSystemType>(Properties.Settings.Default.SelectedPolarAlignmentSystem, out var result)
+                    ? result : PolarAlignmentSystemType.None;
+            }
+            set {
+                Properties.Settings.Default.SelectedPolarAlignmentSystem = value.ToString();
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(IsSystemSelected));
+                RaisePropertyChanged(nameof(IsUPASSelected));
+                RaisePropertyChanged(nameof(IsAAPASelected));
+                RaisePropertyChanged(nameof(ActiveSystem));
+            }
+        }
+
+        public bool IsSystemSelected => SelectedPolarAlignmentSystem != PolarAlignmentSystemType.None;
+        public bool IsUPASSelected => SelectedPolarAlignmentSystem == PolarAlignmentSystemType.UPAS;
+        public bool IsAAPASelected => SelectedPolarAlignmentSystem == PolarAlignmentSystemType.AAPA;
+
+        /// <summary>Instance wrapper for XAML binding with PropertyChanged support.</summary>
+        public IPolarAlignmentSystemVM ActiveSystem => ActiveAlignmentSystemVM;
 
         public static string PluginId { get; private set; }
 

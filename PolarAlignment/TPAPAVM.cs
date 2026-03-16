@@ -146,7 +146,7 @@ namespace NINA.Plugins.PolarAlignment {
         private Movement lastMovement = null;
         public async Task MoveCloser(IProgress<ApplicationStatus> progress, CancellationToken token) {
             var activeSystem = ActiveAlignmentSystemVM;
-            if (activeSystem == null || !activeSystem.UsePolarAlignmentSystem || !activeSystem.DoAutomatedAdjustments) { return; }
+            if (activeSystem == null || !activeSystem.DoAutomatedAdjustments) { return; }
 
             var az = PolarErrorDetermination.CurrentMountAxisAzimuthError;
             var alt = PolarErrorDetermination.CurrentMountAxisAltitudeError;

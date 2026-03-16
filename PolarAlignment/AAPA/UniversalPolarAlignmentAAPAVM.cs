@@ -10,18 +10,6 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
 
         protected override IPolarAlignmentSystem CreateSystem() => new UniversalPolarAlignmentAAPA();
 
-        public override bool UsePolarAlignmentSystem {
-            get => Properties.Settings.Default.UseAAPAPolarAlignmentSystem;
-            set {
-                Properties.Settings.Default.UseAAPAPolarAlignmentSystem = value;
-                if (value && PolarAlignmentPlugin.UniversalPolarAlignmentVM is { } avalon) {
-                    avalon.UsePolarAlignmentSystem = false;
-                }
-                CoreUtil.SaveSettings(Properties.Settings.Default);
-                RaisePropertyChanged();
-            }
-        }
-
         public override bool DoAutomatedAdjustments {
             get => Properties.Settings.Default.DoAutomatedAdjustments;
             set {
