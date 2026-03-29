@@ -451,7 +451,7 @@ namespace NINA.Plugins.PolarAlignment.Instructions {
                             Stop tracking when done: {Properties.Settings.Default.StopTrackingWhenDone}
                             Auto pause: {Properties.Settings.Default.AutoPause}
                             Avalon UPA: {Properties.Settings.Default.UseAvalonPolarAlignmentSystem}
-                            AAPA: {Properties.Settings.Default.UseAAPAPolarAlignmentSystem}
+                            OAPA: {Properties.Settings.Default.UseOAPAPolarAlignmentSystem}
                             Selected System: {Properties.Settings.Default.SelectedPolarAlignmentSystem}
                             Automated adjustments: {Properties.Settings.Default.DoAutomatedAdjustments}
                         """);
