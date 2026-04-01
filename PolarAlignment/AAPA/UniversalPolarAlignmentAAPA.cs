@@ -9,12 +9,19 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
         protected override int ScanReadTimeout => 300;
         protected override int ScanWriteTimeout => 300;
         protected override bool ClearBufferOnConnect => true;
+        protected override int PostOpenDelayMs => 100;
 
         private float xGearRatio = Properties.Settings.Default.AAPAXGearRatio;
         private float yGearRatio = Properties.Settings.Default.AAPAYGearRatio;
 
         public override float XGearRatio { get => xGearRatio; set => xGearRatio = value; }
         public override float YGearRatio { get => yGearRatio; set => yGearRatio = value; }
+
+        /// <summary>Serial constructor: auto-scans COM ports.</summary>
+        public UniversalPolarAlignmentAAPA() : base() { }
+
+        /// <summary>TCP constructor: connects to a remote ESP32 bridge at host:port.</summary>
+        public UniversalPolarAlignmentAAPA(string tcpHost, int tcpPort) : base(tcpHost, tcpPort) { }
 
         protected override Regex GetStatusRegex() => StatusRegex();
 

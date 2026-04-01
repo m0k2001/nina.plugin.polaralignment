@@ -1,4 +1,4 @@
-﻿using NINA.Core.Utility;
+using NINA.Core.Utility;
 using NINA.Profile.Interfaces;
 using NINA.Plugins.PolarAlignment.Avalon;
 
@@ -9,6 +9,36 @@ namespace NINA.Plugins.PolarAlignment.Avalon {
         protected override string SystemName => "Avalon Polar Alignment System";
 
         protected override IPolarAlignmentSystem CreateSystem() => new UniversalPolarAlignment();
+
+        protected override IPolarAlignmentSystem CreateSystemTcp(string host, int port) =>
+            new UniversalPolarAlignment(host, port);
+
+        public override ConnectionMode ConnectionMode {
+            get => Properties.Settings.Default.AvalonConnectionMode;
+            set {
+                Properties.Settings.Default.AvalonConnectionMode = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public override string TcpHost {
+            get => Properties.Settings.Default.AvalonTcpHost;
+            set {
+                Properties.Settings.Default.AvalonTcpHost = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public override int TcpPort {
+            get => Properties.Settings.Default.AvalonTcpPort;
+            set {
+                Properties.Settings.Default.AvalonTcpPort = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
 
         public override bool DoAutomatedAdjustments {
             get => Properties.Settings.Default.DoAutomatedAdjustments;

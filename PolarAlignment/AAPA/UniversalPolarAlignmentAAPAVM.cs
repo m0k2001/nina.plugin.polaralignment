@@ -10,6 +10,36 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
 
         protected override IPolarAlignmentSystem CreateSystem() => new UniversalPolarAlignmentAAPA();
 
+        protected override IPolarAlignmentSystem CreateSystemTcp(string host, int port) =>
+            new UniversalPolarAlignmentAAPA(host, port);
+
+        public override ConnectionMode ConnectionMode {
+            get => Properties.Settings.Default.AAPAConnectionMode;
+            set {
+                Properties.Settings.Default.AAPAConnectionMode = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public override string TcpHost {
+            get => Properties.Settings.Default.AAPATcpHost;
+            set {
+                Properties.Settings.Default.AAPATcpHost = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
+        public override int TcpPort {
+            get => Properties.Settings.Default.AAPATcpPort;
+            set {
+                Properties.Settings.Default.AAPATcpPort = value;
+                CoreUtil.SaveSettings(Properties.Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
         public override bool DoAutomatedAdjustments {
             get => Properties.Settings.Default.DoAutomatedAdjustments;
             set {

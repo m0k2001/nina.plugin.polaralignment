@@ -7,68 +7,99 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace NINA.Plugins.PolarAlignment {
+
+    public enum ConnectionMode {
+        Serial,
+        Tcp
+    }
+
     public abstract partial class UniversalPolarAlignmentBase : IPolarAlignmentSystem {
-        private readonly SerialPort port;
+        private readonly ISerialLike port;
 
         protected abstract string SystemName { get; }
         protected virtual string NewLineSequence => "\r\n";
         protected virtual int ScanReadTimeout => 1000;
         protected virtual int ScanWriteTimeout => 1000;
         protected virtual bool ClearBufferOnConnect => false;
+        protected virtual int PostOpenDelayMs => 0;
 
         protected abstract Regex GetStatusRegex();
 
-        protected SerialPort Port => port;
+        protected ISerialLike Port => port;
 
+        /// <summary>
+        /// Serial constructor: scans all COM ports and auto-detects the device by its status response.
+        /// </summary>
         protected UniversalPolarAlignmentBase() {
             var comPorts = SerialPort.GetPortNames();
             foreach (var comPort in comPorts) {
-                var serialPortToTest = new SerialPort() {
+                var serialPort = new SerialPort() {
                     PortName = comPort,
                     BaudRate = 115200,
                     Parity = Parity.None,
                     DataBits = 8,
                     StopBits = StopBits.One,
-                    NewLine = NewLineSequence
+                    NewLine = NewLineSequence,
+                    ReadTimeout = ScanReadTimeout,
+                    WriteTimeout = ScanWriteTimeout
                 };
 
-                serialPortToTest.ReadTimeout = ScanReadTimeout;
-                serialPortToTest.WriteTimeout = ScanWriteTimeout;
-
                 try {
-                    serialPortToTest.Open();
-                    if (serialPortToTest.IsOpen) {
-                        if (ClearBufferOnConnect) {
-                            Thread.Sleep(100);
-                            serialPortToTest.DiscardInBuffer();
-                        }
+                    serialPort.Open();
+                    if (serialPort.IsOpen) {
+                        if (PostOpenDelayMs > 0) Thread.Sleep(PostOpenDelayMs);
+                        if (ClearBufferOnConnect) serialPort.DiscardInBuffer();
 
-                        serialPortToTest.WriteLine("?");
-                        var status = serialPortToTest.ReadLine();
-                        _ = serialPortToTest.ReadLine();
+                        serialPort.WriteLine("?");
+                        var status = serialPort.ReadLine();
+                        _ = serialPort.ReadLine();
                         var match = GetStatusRegex().Match(status);
                         if (match.Success) {
-                            port = serialPortToTest;
+                            port = new SerialPortAdapter(serialPort);
                             Logger.Info($"Found {SystemName} on {comPort}");
                             break;
                         } else {
-                            serialPortToTest.Close();
-                            serialPortToTest.Dispose();
-                            continue;
+                            serialPort.Close();
+                            serialPort.Dispose();
                         }
                     }
                 } catch {
-                    serialPortToTest?.Close();
-                    serialPortToTest?.Dispose();
+                    serialPort?.Close();
+                    serialPort?.Dispose();
                 }
             }
+
             if (port == null) {
-                throw new Exception($"Unable to find {SystemName}");
+                throw new Exception($"Unable to find {SystemName} on any COM port");
             }
             UpdateStatus();
         }
 
-        public bool Connected => port.IsOpen;
+        /// <summary>
+        /// TCP constructor: connects directly to a remote host:port exposing the same serial protocol over TCP.
+        /// </summary>
+        protected UniversalPolarAlignmentBase(string tcpHost, int tcpPort) {
+            Logger.Info($"Connecting to {SystemName} via TCP at {tcpHost}:{tcpPort}");
+            var adapter = new TcpPortAdapter(tcpHost, tcpPort, ScanReadTimeout, ScanWriteTimeout, NewLineSequence);
+
+            if (PostOpenDelayMs > 0) Thread.Sleep(PostOpenDelayMs);
+            if (ClearBufferOnConnect) adapter.DiscardInBuffer();
+
+            adapter.WriteLine("?");
+            var status = adapter.ReadLine();
+            _ = adapter.ReadLine();
+            var match = GetStatusRegex().Match(status);
+            if (!match.Success) {
+                adapter.Dispose();
+                throw new Exception($"Unable to identify {SystemName} at {tcpHost}:{tcpPort} — unexpected response: {status}");
+            }
+
+            port = adapter;
+            Logger.Info($"Found {SystemName} via TCP at {tcpHost}:{tcpPort}");
+            UpdateStatus();
+        }
+
+        public bool Connected => port?.IsOpen == true;
         public string Status { get; private set; }
 
         private float XPosition { get; set; }
@@ -136,21 +167,16 @@ namespace NINA.Plugins.PolarAlignment {
                 while (Math.Abs(checkProperty() - target) > 0.01f) {
                     UpdateStatus();
                     var currentPos = checkProperty();
-
                     if (Math.Abs(currentPos - lastPos) < 0.01f) {
                         stuckCount++;
-                        if (stuckCount > 5) {
-                            throw new TimeoutException($"Motor appears stuck at position {currentPos}. Target was {target}. Check hardware and endstops.");
-                        }
+                        if (stuckCount > 5)
+                            throw new TimeoutException($"Motor appears stuck at position {currentPos}. Target was {target}.");
                     } else {
                         stuckCount = 0;
                     }
                     lastPos = currentPos;
-
-                    if (DateTime.Now - startTime > timeout) {
+                    if (DateTime.Now - startTime > timeout)
                         throw new TimeoutException($"Movement timeout after {timeout.TotalSeconds}s. Current: {currentPos}, Target: {target}");
-                    }
-
                     await Task.Delay(300, token);
                 }
             } finally {
@@ -196,30 +222,24 @@ namespace NINA.Plugins.PolarAlignment {
                     _ => throw new ArgumentException("Invalid Axis"),
                 };
 
-                var startPos = checkProperty();
                 var timeout = TimeSpan.FromSeconds(30);
                 var startTime = DateTime.Now;
-                var lastPos = startPos;
+                var lastPos = checkProperty();
                 var stuckCount = 0;
 
                 while (Math.Abs(checkProperty() - target) > 0.01f) {
                     UpdateStatus();
                     var currentPos = checkProperty();
-
                     if (Math.Abs(currentPos - lastPos) < 0.01f) {
                         stuckCount++;
-                        if (stuckCount > 5) {
-                            throw new TimeoutException($"Motor appears stuck at position {currentPos}. Target was {target}. Check hardware and endstops.");
-                        }
+                        if (stuckCount > 5)
+                            throw new TimeoutException($"Motor appears stuck at position {currentPos}. Target was {target}.");
                     } else {
                         stuckCount = 0;
                     }
                     lastPos = currentPos;
-
-                    if (DateTime.Now - startTime > timeout) {
+                    if (DateTime.Now - startTime > timeout)
                         throw new TimeoutException($"Movement timeout after {timeout.TotalSeconds}s. Current: {currentPos}, Target: {target}");
-                    }
-
                     await Task.Delay(300, token);
                 }
             } finally {

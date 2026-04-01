@@ -514,5 +514,79 @@ namespace NINA.Plugins.PolarAlignment.Properties {
                 this["AAPAYHoldPercent"] = value;
             }
         }
+
+        // --- TCP connection settings ---
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Serial")]
+        public global::NINA.Plugins.PolarAlignment.ConnectionMode AAPAConnectionMode {
+            get {
+                return ((global::NINA.Plugins.PolarAlignment.ConnectionMode)(this["AAPAConnectionMode"]));
+            }
+            set {
+                this["AAPAConnectionMode"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.100")]
+        public string AAPATcpHost {
+            get {
+                return ((string)(this["AAPATcpHost"]));
+            }
+            set {
+                this["AAPATcpHost"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("23")]
+        public int AAPATcpPort {
+            get {
+                return ((int)(this["AAPATcpPort"]));
+            }
+            set {
+                this["AAPATcpPort"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Serial")]
+        public global::NINA.Plugins.PolarAlignment.ConnectionMode AvalonConnectionMode {
+            get {
+                return ((global::NINA.Plugins.PolarAlignment.ConnectionMode)(this["AvalonConnectionMode"]));
+            }
+            set {
+                this["AvalonConnectionMode"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.100")]
+        public string AvalonTcpHost {
+            get {
+                return ((string)(this["AvalonTcpHost"]));
+            }
+            set {
+                this["AvalonTcpHost"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("23")]
+        public int AvalonTcpPort {
+            get {
+                return ((int)(this["AvalonTcpPort"]));
+            }
+            set {
+                this["AvalonTcpPort"] = value;
+            }
+        }
     }
 }

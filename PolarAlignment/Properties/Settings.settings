@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="NINA.Plugins.PolarAlignment.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
@@ -124,6 +124,28 @@
     </Setting>
     <Setting Name="AAPAYHoldPercent" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">50</Value>
+    </Setting>
+
+    <!-- TCP connection settings for AAPA -->
+    <Setting Name="AAPAConnectionMode" Type="NINA.Plugins.PolarAlignment.ConnectionMode" Scope="User">
+      <Value Profile="(Default)">Serial</Value>
+    </Setting>
+    <Setting Name="AAPATcpHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.1.100</Value>
+    </Setting>
+    <Setting Name="AAPATcpPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">23</Value>
+    </Setting>
+
+    <!-- TCP connection settings for Avalon -->
+    <Setting Name="AvalonConnectionMode" Type="NINA.Plugins.PolarAlignment.ConnectionMode" Scope="User">
+      <Value Profile="(Default)">Serial</Value>
+    </Setting>
+    <Setting Name="AvalonTcpHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.1.100</Value>
+    </Setting>
+    <Setting Name="AvalonTcpPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">23</Value>
     </Setting>
   </Settings>
 </SettingsFile>
