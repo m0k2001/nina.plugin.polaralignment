@@ -555,6 +555,30 @@ namespace NINA.Plugins.PolarAlignment.Properties {
 
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AAPALastKnownIp {
+            get {
+                return ((string)(this["AAPALastKnownIp"]));
+            }
+            set {
+                this["AAPALastKnownIp"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AvalonLastKnownIp {
+            get {
+                return ((string)(this["AvalonLastKnownIp"]));
+            }
+            set {
+                this["AvalonLastKnownIp"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Serial")]
         public global::NINA.Plugins.PolarAlignment.ConnectionMode AvalonConnectionMode {
             get {

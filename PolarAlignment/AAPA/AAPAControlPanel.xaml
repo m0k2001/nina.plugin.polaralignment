@@ -4,10 +4,72 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:s="clr-namespace:System;assembly=mscorlib"
+             xmlns:pa="clr-namespace:NINA.Plugins.PolarAlignment"
              xmlns:local="clr-namespace:NINA.Plugins.PolarAlignment.AAPA"
              mc:Ignorable="d">
 
     <StackPanel>
+
+        <!-- Connection Settings -->
+        <GroupBox Header="Connection" Margin="0,0,0,5">
+            <StackPanel>
+                <!-- Connection mode selector -->
+                <StackPanel Orientation="Horizontal" Margin="5,5,5,2">
+                    <TextBlock VerticalAlignment="Center" Margin="0,0,8,0">Mode</TextBlock>
+                    <ComboBox VerticalAlignment="Center" Width="160"
+                              SelectedValue="{Binding ConnectionMode}"
+                              SelectedValuePath="Tag">
+                        <ComboBoxItem Tag="Serial">Serial (auto-scan)</ComboBoxItem>
+                        <ComboBoxItem Tag="AutoTcp">WiFi (auto-detect)</ComboBoxItem>
+                        <ComboBoxItem Tag="Tcp">WiFi (IP manuelle)</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Port field: visible when AutoTcp or Tcp -->
+                <Grid Margin="5,2,5,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ConnectionMode}" Value="Serial">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0">Port</TextBlock>
+                    <TextBox   Grid.Column="1" VerticalAlignment="Center" Text="{Binding TcpPort, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+
+                <!-- Host field: visible only when Tcp manuel -->
+                <Grid Margin="5,2,5,5">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ConnectionMode}" Value="Tcp">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,5,0">Host</TextBlock>
+                    <TextBox   Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0" Text="{Binding TcpHost, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,0,5,0">Port</TextBlock>
+                    <TextBox   Grid.Column="3" VerticalAlignment="Center" Text="{Binding TcpPort, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+
         <!-- Motor Settings -->
         <Grid>
             <Grid.ColumnDefinitions>

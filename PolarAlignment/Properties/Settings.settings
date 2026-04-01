@@ -137,6 +137,10 @@
       <Value Profile="(Default)">23</Value>
     </Setting>
 
+    <Setting Name="AAPALastKnownIp" Type="System.String" Scope="User">
+      <Value Profile="(Default)"></Value>
+    </Setting>
+
     <!-- TCP connection settings for Avalon -->
     <Setting Name="AvalonConnectionMode" Type="NINA.Plugins.PolarAlignment.ConnectionMode" Scope="User">
       <Value Profile="(Default)">Serial</Value>
@@ -146,6 +150,9 @@
     </Setting>
     <Setting Name="AvalonTcpPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">23</Value>
+    </Setting>
+    <Setting Name="AvalonLastKnownIp" Type="System.String" Scope="User">
+      <Value Profile="(Default)"></Value>
     </Setting>
   </Settings>
 </SettingsFile>

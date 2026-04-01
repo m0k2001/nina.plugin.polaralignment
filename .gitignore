@@ -7,6 +7,7 @@
 *.sln.docstates
 
 .axoCover
+ESP32/src/wifi_credentials.h
 
 # Build results
 [Dd]ebug/

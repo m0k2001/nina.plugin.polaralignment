@@ -15,26 +15,18 @@ namespace NINA.Plugins.PolarAlignment {
 
         protected abstract IPolarAlignmentSystem CreateSystem();
         protected abstract IPolarAlignmentSystem CreateSystemTcp(string host, int port);
+        protected abstract IPolarAlignmentSystem CreateSystemAutoTcp(int port);
         protected abstract string SystemName { get; }
 
         protected UniversalPolarAlignmentBaseVM(IProfileService profileService) : base(profileService) {
             IsNotMoving = true;
         }
 
-        [ObservableProperty]
-        private bool connected;
-
-        [ObservableProperty]
-        private float positionX;
-
-        [ObservableProperty]
-        private float positionY;
-
-        [ObservableProperty]
-        private float targetPositionX;
-
-        [ObservableProperty]
-        private float targetPositionY;
+        [ObservableProperty] private bool connected;
+        [ObservableProperty] private float positionX;
+        [ObservableProperty] private float positionY;
+        [ObservableProperty] private float targetPositionX;
+        [ObservableProperty] private float targetPositionY;
 
         public abstract bool DoAutomatedAdjustments { get; set; }
         public abstract double AutomatedAdjustmentSettleTime { get; set; }
@@ -45,14 +37,8 @@ namespace NINA.Plugins.PolarAlignment {
         public abstract bool ReverseAzimuth { get; set; }
         public abstract bool ReverseAltitude { get; set; }
         public abstract float XBacklashCompensation { get; set; }
-
-        /// <summary>Connection mode: Serial (auto-scan COM ports) or Tcp (manual host:port).</summary>
         public abstract ConnectionMode ConnectionMode { get; set; }
-
-        /// <summary>TCP hostname or IP address (used when ConnectionMode == Tcp).</summary>
         public abstract string TcpHost { get; set; }
-
-        /// <summary>TCP port number (used when ConnectionMode == Tcp). Typical ESP32 bridge default: 23.</summary>
         public abstract int TcpPort { get; set; }
 
         [ObservableProperty]
@@ -66,15 +52,15 @@ namespace NINA.Plugins.PolarAlignment {
 
         [RelayCommand]
         public Task Connect() {
-            if (upa?.Connected == true) { return Task.CompletedTask; }
+            if (upa?.Connected == true) return Task.CompletedTask;
             return Task.Run(async () => {
                 try {
                     await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
-
-                    upa = ConnectionMode == ConnectionMode.Tcp
-                        ? CreateSystemTcp(TcpHost, TcpPort)
-                        : CreateSystem();
-
+                    upa = ConnectionMode switch {
+                        ConnectionMode.Tcp     => CreateSystemTcp(TcpHost, TcpPort),
+                        ConnectionMode.AutoTcp => CreateSystemAutoTcp(TcpPort),
+                        _                      => CreateSystem()
+                    };
                     _ = StartPoll();
                     Connected = true;
                     Notification.ShowInformation($"Successfully connected to {SystemName}");
@@ -87,27 +73,21 @@ namespace NINA.Plugins.PolarAlignment {
 
         [RelayCommand]
         public void Disconnect() {
-            if (upa?.Connected != true) { return; }
+            if (upa?.Connected != true) return;
             Connected = false;
-            try {
-                pollCts?.Cancel();
-                upa.Dispose();
-            } catch (Exception ex) {
-                Logger.Error(ex);
-            }
+            try { pollCts?.Cancel(); upa.Dispose(); }
+            catch (Exception ex) { Logger.Error(ex); }
             Notification.ShowInformation($"Disconnected from {SystemName}");
         }
 
-        [RelayCommand(CanExecute = (nameof(IsNotMoving)))]
+        [RelayCommand(CanExecute = nameof(IsNotMoving))]
         public async Task NudgeX(float position, CancellationToken token) {
             try {
-                if (ReverseAzimuth) { position = position * -1; }
+                if (ReverseAzimuth) position *= -1;
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = false);
-                Logger.Info($"Nudging {SystemName} along X axis by {position}");
-                var lastDirection = upa.XLastDirection;
+                var lastDir = upa.XLastDirection;
                 await upa.MoveRelative(Axis.XAxis, XSpeed, position, token).ConfigureAwait(false);
-                var currentDirection = upa.XLastDirection;
-                await ClearBacklash(lastDirection, currentDirection, token);
+                await ClearBacklash(lastDir, upa.XLastDirection, token);
             } catch (Exception ex) {
                 Logger.Error(ex);
                 if (ex is TimeoutException) Notification.ShowError($"Movement timeout: {ex.Message}");
@@ -116,12 +96,11 @@ namespace NINA.Plugins.PolarAlignment {
             }
         }
 
-        [RelayCommand(CanExecute = (nameof(IsNotMoving)))]
+        [RelayCommand(CanExecute = nameof(IsNotMoving))]
         public async Task NudgeY(float position, CancellationToken token) {
             try {
-                if (ReverseAltitude) { position = position * -1; }
+                if (ReverseAltitude) position *= -1;
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = false);
-                Logger.Info($"Nudging {SystemName} along Y axis by {position}");
                 await upa.MoveRelative(Axis.YAxis, YSpeed, position, token).ConfigureAwait(false);
             } catch (Exception ex) {
                 Logger.Error(ex);
@@ -131,21 +110,14 @@ namespace NINA.Plugins.PolarAlignment {
             }
         }
 
-        public new void RaiseAllPropertiesChanged() {
-            base.RaiseAllPropertiesChanged();
-        }
-
-        [RelayCommand(CanExecute = (nameof(IsNotMoving)))]
+        [RelayCommand(CanExecute = nameof(IsNotMoving))]
         public async Task MoveX(CancellationToken token) {
             try {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = false);
-                var target = TargetPositionX;
-                if (ReverseAzimuth) { target = target * -1; }
-                Logger.Info($"Moving {SystemName} along X axis to {target}");
-                var lastDirection = upa.XLastDirection;
+                var target = ReverseAzimuth ? -TargetPositionX : TargetPositionX;
+                var lastDir = upa.XLastDirection;
                 await upa.MoveAbsolute(Axis.XAxis, XSpeed, target, token).ConfigureAwait(false);
-                var currentDirection = upa.XLastDirection;
-                await ClearBacklash(lastDirection, currentDirection, token);
+                await ClearBacklash(lastDir, upa.XLastDirection, token);
             } catch (Exception ex) {
                 Logger.Error(ex);
                 if (ex is TimeoutException) Notification.ShowError($"Movement timeout: {ex.Message}");
@@ -154,21 +126,11 @@ namespace NINA.Plugins.PolarAlignment {
             }
         }
 
-        private async Task ClearBacklash(LastDirection lastDirection, LastDirection currentDirection, CancellationToken token) {
-            if (lastDirection != currentDirection && Math.Abs(XBacklashCompensation) > 0) {
-                Logger.Info("Direction changed. Clearing backlash");
-                await upa.MoveRelative(Axis.XAxis, XSpeed, -XBacklashCompensation, token).ConfigureAwait(false);
-                await upa.MoveRelative(Axis.XAxis, XSpeed, XBacklashCompensation, token).ConfigureAwait(false);
-            }
-        }
-
-        [RelayCommand(CanExecute = (nameof(IsNotMoving)))]
+        [RelayCommand(CanExecute = nameof(IsNotMoving))]
         public async Task MoveY(CancellationToken token) {
             try {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = false);
-                var target = TargetPositionY;
-                if (ReverseAltitude) { target = target * -1; }
-                Logger.Info($"Moving {SystemName} along Y axis to {target}");
+                var target = ReverseAltitude ? -TargetPositionY : TargetPositionY;
                 await upa.MoveAbsolute(Axis.YAxis, YSpeed, target, token).ConfigureAwait(false);
             } catch (Exception ex) {
                 Logger.Error(ex);
@@ -177,6 +139,16 @@ namespace NINA.Plugins.PolarAlignment {
                 await Application.Current.Dispatcher.BeginInvoke(() => IsNotMoving = true);
             }
         }
+
+        private async Task ClearBacklash(LastDirection lastDir, LastDirection currentDir, CancellationToken token) {
+            if (lastDir != currentDir && Math.Abs(XBacklashCompensation) > 0) {
+                Logger.Info("Direction changed. Clearing backlash");
+                await upa.MoveRelative(Axis.XAxis, XSpeed, -XBacklashCompensation, token).ConfigureAwait(false);
+                await upa.MoveRelative(Axis.XAxis, XSpeed, XBacklashCompensation, token).ConfigureAwait(false);
+            }
+        }
+
+        public new void RaiseAllPropertiesChanged() => base.RaiseAllPropertiesChanged();
 
         private async Task StartPoll() {
             pollCts = new CancellationTokenSource();

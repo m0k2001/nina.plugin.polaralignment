@@ -12,10 +12,26 @@ namespace NINA.Plugins.PolarAlignment {
         private readonly StreamReader _reader;
         private readonly string _newLine;
 
+        /// <summary>Adresse IP de l'hôte distant.</summary>
+        public string RemoteHost { get; }
+
         public TcpPortAdapter(string host, int port, int readTimeoutMs, int writeTimeoutMs, string newLine = "\n") {
             _newLine = newLine;
+            RemoteHost = host;
             _client = new TcpClient();
             _client.Connect(host, port);
+            var stream = _client.GetStream();
+            stream.ReadTimeout = readTimeoutMs;
+            stream.WriteTimeout = writeTimeoutMs;
+            _writer = new StreamWriter(stream, new UTF8Encoding(false)) { AutoFlush = true, NewLine = newLine };
+            _reader = new StreamReader(stream, Encoding.UTF8);
+        }
+
+        /// <summary>Wraps an already-connected TcpClient (used by auto-scan to reuse the probe connection).</summary>
+        public TcpPortAdapter(TcpClient existingClient, int readTimeoutMs, int writeTimeoutMs, string newLine = "\n") {
+            _newLine = newLine;
+            _client = existingClient;
+            RemoteHost = (_client.Client.RemoteEndPoint as System.Net.IPEndPoint)?.Address.ToString();
             var stream = _client.GetStream();
             stream.ReadTimeout = readTimeoutMs;
             stream.WriteTimeout = writeTimeoutMs;
