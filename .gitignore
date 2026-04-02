@@ -5,10 +5,8 @@
 *.user
 *.userosscache
 *.sln.docstates
-*.code-workspace
 
 .axoCover
-ESP32/
 
 # Build results
 [Dd]ebug/
