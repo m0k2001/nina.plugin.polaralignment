@@ -5,6 +5,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.code-workspace
 
 .axoCover
 ESP32/src/wifi_credentials.h
