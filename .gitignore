@@ -8,7 +8,7 @@
 *.code-workspace
 
 .axoCover
-ESP32/src/wifi_credentials.h
+ESP32/
 
 # Build results
 [Dd]ebug/
