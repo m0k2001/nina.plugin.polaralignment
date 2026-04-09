@@ -23,6 +23,7 @@ namespace NINA.Plugins.PolarAlignment {
     public interface IPolarAlignmentSystem : IDisposable {
         bool Connected { get; }
         string Status { get; }
+        string RemoteEndpoint { get; }
 
         float XPosition1 { get; }
         float YPosition1 { get; }

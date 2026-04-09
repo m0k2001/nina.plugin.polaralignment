@@ -14,8 +14,10 @@ namespace NINA.Plugins.PolarAlignment {
         protected IPolarAlignmentSystem upa;
 
         protected abstract IPolarAlignmentSystem CreateSystem();
-        protected abstract IPolarAlignmentSystem CreateSystemTcp(string host, int port);
-        protected abstract IPolarAlignmentSystem CreateSystemAutoTcp(int port);
+        protected virtual IPolarAlignmentSystem CreateSystemTcp(string host, int port) =>
+            throw new NotSupportedException($"{SystemName} does not support TCP connections");
+        protected virtual IPolarAlignmentSystem CreateSystemAutoTcp(int port) =>
+            throw new NotSupportedException($"{SystemName} does not support auto-TCP connections");
         protected abstract string SystemName { get; }
 
         protected UniversalPolarAlignmentBaseVM(IProfileService profileService) : base(profileService) {
@@ -37,9 +39,18 @@ namespace NINA.Plugins.PolarAlignment {
         public abstract bool ReverseAzimuth { get; set; }
         public abstract bool ReverseAltitude { get; set; }
         public abstract float XBacklashCompensation { get; set; }
-        public abstract ConnectionMode ConnectionMode { get; set; }
-        public abstract string TcpHost { get; set; }
-        public abstract int TcpPort { get; set; }
+        public virtual ConnectionMode ConnectionMode {
+            get => ConnectionMode.Serial;
+            set { }
+        }
+        public virtual string TcpHost {
+            get => "127.0.0.1";
+            set { }
+        }
+        public virtual int TcpPort {
+            get => 23;
+            set { }
+        }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(NudgeXCommand))]
@@ -63,7 +74,11 @@ namespace NINA.Plugins.PolarAlignment {
                     };
                     _ = StartPoll();
                     Connected = true;
-                    Notification.ShowInformation($"Successfully connected to {SystemName}");
+                    var endpoint = upa.RemoteEndpoint;
+                    var msg = string.IsNullOrEmpty(endpoint)
+                        ? $"Successfully connected to {SystemName}"
+                        : $"Successfully connected to {SystemName} at {endpoint}";
+                    Notification.ShowInformation(msg);
                 } catch (Exception ex) {
                     Logger.Error(ex);
                     Notification.ShowError($"Unable to connect to {SystemName}");

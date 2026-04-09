@@ -6,8 +6,8 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
     public partial class UniversalPolarAlignmentAAPA : UniversalPolarAlignmentBase {
         protected override string SystemName => "AAPA System";
         protected override string NewLineSequence => "\n";
-        protected override int ScanReadTimeout => 300;
-        protected override int ScanWriteTimeout => 300;
+        protected override int ScanReadTimeout => 2000;
+        protected override int ScanWriteTimeout => 1000;
         protected override bool ClearBufferOnConnect => true;
         protected override int PostOpenDelayMs => 100;
         protected override int AutoScanTimeoutMs => 500;
@@ -16,6 +16,12 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
         protected override string GetLastKnownIp() => Properties.Settings.Default.AAPALastKnownIp;
         protected override void SaveLastKnownIp(string ip) {
             Properties.Settings.Default.AAPALastKnownIp = ip;
+            CoreUtil.SaveSettings(Properties.Settings.Default);
+        }
+
+        protected override string GetLastKnownComPort() => Properties.Settings.Default.AAPALastKnownComPort;
+        protected override void SaveLastKnownComPort(string comPort) {
+            Properties.Settings.Default.AAPALastKnownComPort = comPort;
             CoreUtil.SaveSettings(Properties.Settings.Default);
         }
 

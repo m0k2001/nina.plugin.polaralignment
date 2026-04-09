@@ -43,6 +43,11 @@ namespace NINA.Plugins.PolarAlignment {
         /// <summary>Persiste l'IP après une connexion AutoTcp réussie.</summary>
         protected virtual void SaveLastKnownIp(string ip) { }
 
+        /// <summary>Dernier port COM connu persisté. Retourne null/vide si aucun.</summary>
+        protected virtual string GetLastKnownComPort() => null;
+        /// <summary>Persiste le port COM après une connexion série réussie.</summary>
+        protected virtual void SaveLastKnownComPort(string comPort) { }
+
         protected abstract Regex GetStatusRegex();
         protected ISerialLike Port => port;
 
@@ -50,39 +55,82 @@ namespace NINA.Plugins.PolarAlignment {
         // Constructeur Serial : scan auto des ports COM
         // -----------------------------------------------------------------------
         protected UniversalPolarAlignmentBase() {
-            foreach (var comPort in SerialPort.GetPortNames()) {
-                var serialPort = new SerialPort() {
-                    PortName = comPort,
-                    BaudRate = 115200,
-                    Parity = Parity.None,
-                    DataBits = 8,
-                    StopBits = StopBits.One,
-                    NewLine = NewLineSequence,
-                    ReadTimeout = ScanReadTimeout,
-                    WriteTimeout = ScanWriteTimeout
-                };
-                try {
-                    serialPort.Open();
-                    if (!serialPort.IsOpen) { serialPort.Dispose(); continue; }
-                    if (PostOpenDelayMs > 0) Thread.Sleep(PostOpenDelayMs);
-                    if (ClearBufferOnConnect) serialPort.DiscardInBuffer();
-                    serialPort.WriteLine("?");
-                    var status = serialPort.ReadLine();
-                    _ = serialPort.ReadLine();
-                    if (GetStatusRegex().Match(status).Success) {
-                        port = new SerialPortAdapter(serialPort);
-                        Logger.Info($"Found {SystemName} on {comPort}");
-                        break;
-                    }
-                    serialPort.Close();
-                    serialPort.Dispose();
-                } catch {
-                    serialPort?.Close();
-                    serialPort?.Dispose();
+            var allPorts = SerialPort.GetPortNames();
+            string foundOnPort = null;
+
+            // Étape 1 : tester le dernier port COM connu
+            var lastKnown = GetLastKnownComPort();
+            if (!string.IsNullOrEmpty(lastKnown) && allPorts.Contains(lastKnown)) {
+                Logger.Info($"Trying last known COM port: {lastKnown}");
+                var result = TryProbeSerialPort(lastKnown);
+                if (result != null) {
+                    port = result;
+                    foundOnPort = lastKnown;
                 }
             }
+
+            // Étape 2 : scanner les autres ports en parallèle
+            if (port == null) {
+                var remainingPorts = allPorts.Where(p => p != lastKnown).ToArray();
+                if (remainingPorts.Length > 0) {
+                    Logger.Info($"Scanning {remainingPorts.Length} COM ports in parallel...");
+                    var results = new ISerialLike[remainingPorts.Length];
+                    var tasks = remainingPorts.Select((comPort, index) => Task.Run(() => {
+                        results[index] = TryProbeSerialPort(comPort);
+                    })).ToArray();
+                    Task.WaitAll(tasks);
+
+                    for (int i = 0; i < remainingPorts.Length; i++) {
+                        if (results[i] != null) {
+                            port = results[i];
+                            foundOnPort = remainingPorts[i];
+                            // Fermer les autres ports trouvés
+                            for (int j = i + 1; j < remainingPorts.Length; j++)
+                                results[j]?.Dispose();
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (port == null) throw new Exception($"Unable to find {SystemName} on any COM port");
+
+            Logger.Info($"Found {SystemName} on {foundOnPort}");
+            SaveLastKnownComPort(foundOnPort);
             UpdateStatus();
+        }
+
+        private ISerialLike TryProbeSerialPort(string comPort) {
+            var serialPort = new SerialPort() {
+                PortName = comPort,
+                BaudRate = 115200,
+                Parity = Parity.None,
+                DataBits = 8,
+                StopBits = StopBits.One,
+                DtrEnable = false,
+                RtsEnable = false,
+                NewLine = NewLineSequence,
+                ReadTimeout = ScanReadTimeout,
+                WriteTimeout = ScanWriteTimeout
+            };
+            try {
+                serialPort.Open();
+                if (!serialPort.IsOpen) { serialPort.Dispose(); return null; }
+                if (PostOpenDelayMs > 0) Thread.Sleep(PostOpenDelayMs);
+                if (ClearBufferOnConnect) serialPort.DiscardInBuffer();
+                serialPort.WriteLine("?");
+                var status = serialPort.ReadLine();
+                _ = serialPort.ReadLine();
+                if (GetStatusRegex().Match(status).Success) {
+                    return new SerialPortAdapter(serialPort);
+                }
+                serialPort.Close();
+                serialPort.Dispose();
+            } catch {
+                serialPort?.Close();
+                serialPort?.Dispose();
+            }
+            return null;
         }
 
         // -----------------------------------------------------------------------
@@ -101,6 +149,7 @@ namespace NINA.Plugins.PolarAlignment {
                 throw new Exception($"Unable to identify {SystemName} at {tcpHost}:{tcpPort} — response: {status}");
             }
             port = adapter;
+            RemoteEndpoint = $"{tcpHost}:{tcpPort}";
             Logger.Info($"Found {SystemName} via TCP at {tcpHost}:{tcpPort}");
             UpdateStatus();
         }
@@ -151,6 +200,7 @@ namespace NINA.Plugins.PolarAlignment {
                 foundIp = tcpAdapter.RemoteHost;
             }
             if (!string.IsNullOrEmpty(foundIp)) {
+                RemoteEndpoint = $"{foundIp}:{tcpPort}";
                 Logger.Info($"Saving last known IP: {foundIp}");
                 SaveLastKnownIp(foundIp);
             }
@@ -412,6 +462,7 @@ namespace NINA.Plugins.PolarAlignment {
         // -----------------------------------------------------------------------
         public bool Connected => port?.IsOpen == true;
         public string Status { get; private set; }
+        public string RemoteEndpoint { get; private set; }
 
         private float XPosition { get; set; }
         private float YPosition { get; set; }

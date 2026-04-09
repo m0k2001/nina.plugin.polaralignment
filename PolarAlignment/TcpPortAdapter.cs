@@ -1,6 +1,9 @@
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NINA.Plugins.PolarAlignment {
     /// <summary>
@@ -15,11 +18,20 @@ namespace NINA.Plugins.PolarAlignment {
         /// <summary>Adresse IP de l'hôte distant.</summary>
         public string RemoteHost { get; }
 
+        /// <summary>Timeout pour l'établissement de la connexion TCP (ms).</summary>
+        private const int ConnectTimeoutMs = 5000;
+
         public TcpPortAdapter(string host, int port, int readTimeoutMs, int writeTimeoutMs, string newLine = "\n") {
             _newLine = newLine;
             RemoteHost = host;
             _client = new TcpClient();
-            _client.Connect(host, port);
+            using var cts = new CancellationTokenSource(ConnectTimeoutMs);
+            try {
+                _client.ConnectAsync(host, port).Wait(cts.Token);
+            } catch (OperationCanceledException) {
+                _client.Dispose();
+                throw new TimeoutException($"Connection to {host}:{port} timed out after {ConnectTimeoutMs / 1000}s");
+            }
             var stream = _client.GetStream();
             stream.ReadTimeout = readTimeoutMs;
             stream.WriteTimeout = writeTimeoutMs;

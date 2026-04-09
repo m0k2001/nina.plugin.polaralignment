@@ -556,6 +556,18 @@ namespace NINA.Plugins.PolarAlignment.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AAPALastKnownComPort {
+            get {
+                return ((string)(this["AAPALastKnownComPort"]));
+            }
+            set {
+                this["AAPALastKnownComPort"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string AAPALastKnownIp {
             get {
                 return ((string)(this["AAPALastKnownIp"]));
