@@ -14,7 +14,7 @@ using NINA.Core.Utility;
 using NINA.Plugin;
 using NINA.Plugin.Interfaces;
 using NINA.Plugins.PolarAlignment.Avalon;
-using NINA.Plugins.PolarAlignment.AAPA;
+using NINA.Plugins.PolarAlignment.OAPA;
 using NINA.Profile;
 using NINA.Profile.Interfaces;
 
@@ -22,12 +22,12 @@ namespace NINA.Plugins.PolarAlignment {
     [Export(typeof(IPluginManifest))]
     public class PolarAlignmentPlugin : PluginBase, INotifyPropertyChanged {
         public static UniversalPolarAlignmentVM UniversalPolarAlignmentVM { get; private set; }
-        public static UniversalPolarAlignmentAAPAVM UniversalPolarAlignmentAAPAVM { get; private set; }
+        public static UniversalPolarAlignmentOAPAVM UniversalPolarAlignmentOAPAVM { get; private set; }
 
         public static IPolarAlignmentSystemVM ActiveAlignmentSystemVM =>
             Properties.Settings.Default.SelectedPolarAlignmentSystem switch {
                 "UPAS" => UniversalPolarAlignmentVM,
-                "AAPA" => UniversalPolarAlignmentAAPAVM,
+                "OAPA" => UniversalPolarAlignmentOAPAVM,
                 _ => null
             };
 
@@ -42,14 +42,14 @@ namespace NINA.Plugins.PolarAlignment {
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsSystemSelected));
                 RaisePropertyChanged(nameof(IsUPASSelected));
-                RaisePropertyChanged(nameof(IsAAPASelected));
+                RaisePropertyChanged(nameof(IsOAPASelected));
                 RaisePropertyChanged(nameof(ActiveSystem));
             }
         }
 
         public bool IsSystemSelected => SelectedPolarAlignmentSystem != PolarAlignmentSystemType.None;
         public bool IsUPASSelected => SelectedPolarAlignmentSystem == PolarAlignmentSystemType.UPAS;
-        public bool IsAAPASelected => SelectedPolarAlignmentSystem == PolarAlignmentSystemType.AAPA;
+        public bool IsOAPASelected => SelectedPolarAlignmentSystem == PolarAlignmentSystemType.OAPA;
 
         /// <summary>Instance wrapper for XAML binding with PropertyChanged support.</summary>
         public IPolarAlignmentSystemVM ActiveSystem => ActiveAlignmentSystemVM;
@@ -65,7 +65,7 @@ namespace NINA.Plugins.PolarAlignment {
             }
             ResetSettingsCommand = new GalaSoft.MvvmLight.Command.RelayCommand(ResetSettings);
             UniversalPolarAlignmentVM = new UniversalPolarAlignmentVM(profileService);
-            UniversalPolarAlignmentAAPAVM = new UniversalPolarAlignmentAAPAVM(profileService);
+            UniversalPolarAlignmentOAPAVM = new UniversalPolarAlignmentOAPAVM(profileService);
             PluginId = this.Identifier;
         }
 
@@ -78,7 +78,7 @@ namespace NINA.Plugins.PolarAlignment {
                     CoreUtil.SaveSettings(Properties.Settings.Default);
                     RaisePropertyChanged(null);
                     UniversalPolarAlignmentVM.RaiseAllPropertiesChanged();
-                    UniversalPolarAlignmentAAPAVM.RaiseAllPropertiesChanged();
+                    UniversalPolarAlignmentOAPAVM.RaiseAllPropertiesChanged();
                 }
             } catch(Exception ex) {
                 Logger.Error(ex);

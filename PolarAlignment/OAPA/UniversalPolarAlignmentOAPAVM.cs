@@ -1,14 +1,14 @@
 using NINA.Core.Utility;
 using NINA.Profile.Interfaces;
-using NINA.Plugins.PolarAlignment.AAPA;
+using NINA.Plugins.PolarAlignment.OAPA;
 
-namespace NINA.Plugins.PolarAlignment.AAPA {
-    public partial class UniversalPolarAlignmentAAPAVM : UniversalPolarAlignmentBaseVM {
-        public UniversalPolarAlignmentAAPAVM(IProfileService profileService) : base(profileService) { }
+namespace NINA.Plugins.PolarAlignment.OAPA {
+    public partial class UniversalPolarAlignmentOAPAVM : UniversalPolarAlignmentBaseVM {
+        public UniversalPolarAlignmentOAPAVM(IProfileService profileService) : base(profileService) { }
 
-        protected override string SystemName => "AAPA System";
+        protected override string SystemName => "OAPA System";
 
-        protected override IPolarAlignmentSystem CreateSystem() => new UniversalPolarAlignmentAAPA();
+        protected override IPolarAlignmentSystem CreateSystem() => new UniversalPolarAlignmentOAPA();
 
         public override bool DoAutomatedAdjustments {
             get => Properties.Settings.Default.DoAutomatedAdjustments;
@@ -29,10 +29,10 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
         }
 
         public override float XGearRatio {
-            get => Properties.Settings.Default.AAPAXGearRatio;
+            get => Properties.Settings.Default.OAPAXGearRatio;
             set {
                 if (value < 1) { value = 1; }
-                Properties.Settings.Default.AAPAXGearRatio = value;
+                Properties.Settings.Default.OAPAXGearRatio = value;
                 if (upa != null) { upa.XGearRatio = value; }
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
@@ -41,19 +41,19 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
         }
 
         public override int XSpeed {
-            get => Properties.Settings.Default.AAPAXSpeed;
+            get => Properties.Settings.Default.OAPAXSpeed;
             set {
-                Properties.Settings.Default.AAPAXSpeed = value;
+                Properties.Settings.Default.OAPAXSpeed = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
 
         public override float YGearRatio {
-            get => Properties.Settings.Default.AAPAYGearRatio;
+            get => Properties.Settings.Default.OAPAYGearRatio;
             set {
                 if (value < 1) { value = 1; }
-                Properties.Settings.Default.AAPAYGearRatio = value;
+                Properties.Settings.Default.OAPAYGearRatio = value;
                 if (upa != null) { upa.YGearRatio = value; }
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
@@ -62,85 +62,85 @@ namespace NINA.Plugins.PolarAlignment.AAPA {
         }
 
         public override int YSpeed {
-            get => Properties.Settings.Default.AAPAYSpeed;
+            get => Properties.Settings.Default.OAPAYSpeed;
             set {
-                Properties.Settings.Default.AAPAYSpeed = value;
+                Properties.Settings.Default.OAPAYSpeed = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
 
         public override bool ReverseAzimuth {
-            get => Properties.Settings.Default.AAPAReverseAzimuth;
+            get => Properties.Settings.Default.OAPAReverseAzimuth;
             set {
-                Properties.Settings.Default.AAPAReverseAzimuth = value;
+                Properties.Settings.Default.OAPAReverseAzimuth = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
 
         public override bool ReverseAltitude {
-            get => Properties.Settings.Default.AAPAReverseAltitude;
+            get => Properties.Settings.Default.OAPAReverseAltitude;
             set {
-                Properties.Settings.Default.AAPAReverseAltitude = value;
+                Properties.Settings.Default.OAPAReverseAltitude = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
 
         public override float XBacklashCompensation {
-            get => Properties.Settings.Default.AAPAXBacklashCompensation;
+            get => Properties.Settings.Default.OAPAXBacklashCompensation;
             set {
-                Properties.Settings.Default.AAPAXBacklashCompensation = value;
+                Properties.Settings.Default.OAPAXBacklashCompensation = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
             }
         }
 
         public int XRunCurrent {
-            get => Properties.Settings.Default.AAPAXRunCurrent;
+            get => Properties.Settings.Default.OAPAXRunCurrent;
             set {
-                Properties.Settings.Default.AAPAXRunCurrent = value;
+                Properties.Settings.Default.OAPAXRunCurrent = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
-                if (upa?.Connected == true && upa is UniversalPolarAlignmentAAPA aapa) {
-                    aapa.SetXRunCurrent(value);
+                if (upa?.Connected == true && upa is UniversalPolarAlignmentOAPA oapa) {
+                    oapa.SetXRunCurrent(value);
                 }
             }
         }
 
         public int YRunCurrent {
-            get => Properties.Settings.Default.AAPAYRunCurrent;
+            get => Properties.Settings.Default.OAPAYRunCurrent;
             set {
-                Properties.Settings.Default.AAPAYRunCurrent = value;
+                Properties.Settings.Default.OAPAYRunCurrent = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
-                if (upa?.Connected == true && upa is UniversalPolarAlignmentAAPA aapa) {
-                    aapa.SetYRunCurrent(value);
+                if (upa?.Connected == true && upa is UniversalPolarAlignmentOAPA oapa) {
+                    oapa.SetYRunCurrent(value);
                 }
             }
         }
 
         public int XHoldPercent {
-            get => Properties.Settings.Default.AAPAXHoldPercent;
+            get => Properties.Settings.Default.OAPAXHoldPercent;
             set {
-                Properties.Settings.Default.AAPAXHoldPercent = value;
+                Properties.Settings.Default.OAPAXHoldPercent = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
-                if (upa?.Connected == true && upa is UniversalPolarAlignmentAAPA aapa) {
-                    aapa.SetXHoldPercent(value);
+                if (upa?.Connected == true && upa is UniversalPolarAlignmentOAPA oapa) {
+                    oapa.SetXHoldPercent(value);
                 }
             }
         }
 
         public int YHoldPercent {
-            get => Properties.Settings.Default.AAPAYHoldPercent;
+            get => Properties.Settings.Default.OAPAYHoldPercent;
             set {
-                Properties.Settings.Default.AAPAYHoldPercent = value;
+                Properties.Settings.Default.OAPAYHoldPercent = value;
                 CoreUtil.SaveSettings(Properties.Settings.Default);
                 RaisePropertyChanged();
-                if (upa?.Connected == true && upa is UniversalPolarAlignmentAAPA aapa) {
-                    aapa.SetYHoldPercent(value);
+                if (upa?.Connected == true && upa is UniversalPolarAlignmentOAPA oapa) {
+                    oapa.SetYHoldPercent(value);
                 }
             }
         }

@@ -2,16 +2,16 @@ using NINA.Core.Utility;
 using System;
 using System.Text.RegularExpressions;
 
-namespace NINA.Plugins.PolarAlignment.AAPA {
-    public partial class UniversalPolarAlignmentAAPA : UniversalPolarAlignmentBase {
-        protected override string SystemName => "AAPA System";
+namespace NINA.Plugins.PolarAlignment.OAPA {
+    public partial class UniversalPolarAlignmentOAPA : UniversalPolarAlignmentBase {
+        protected override string SystemName => "OAPA System";
         protected override string NewLineSequence => "\n";
         protected override int ScanReadTimeout => 300;
         protected override int ScanWriteTimeout => 300;
         protected override bool ClearBufferOnConnect => true;
 
-        private float xGearRatio = Properties.Settings.Default.AAPAXGearRatio;
-        private float yGearRatio = Properties.Settings.Default.AAPAYGearRatio;
+        private float xGearRatio = Properties.Settings.Default.OAPAXGearRatio;
+        private float yGearRatio = Properties.Settings.Default.OAPAYGearRatio;
 
         public override float XGearRatio { get => xGearRatio; set => xGearRatio = value; }
         public override float YGearRatio { get => yGearRatio; set => yGearRatio = value; }
