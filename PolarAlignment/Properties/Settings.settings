@@ -86,61 +86,61 @@
     <Setting Name="AutoPause" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="UseAAPAPolarAlignmentSystem" Type="System.Boolean" Scope="User">
+    <Setting Name="UseOAPAPolarAlignmentSystem" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SelectedPolarAlignmentSystem" Type="System.String" Scope="User">
       <Value Profile="(Default)">None</Value>
     </Setting>
-    <Setting Name="AAPAXGearRatio" Type="System.Single" Scope="User">
+    <Setting Name="OAPAXGearRatio" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="AAPAXSpeed" Type="System.Int32" Scope="User">
+    <Setting Name="OAPAXSpeed" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1000</Value>
     </Setting>
-    <Setting Name="AAPAYGearRatio" Type="System.Single" Scope="User">
+    <Setting Name="OAPAYGearRatio" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="AAPAYSpeed" Type="System.Int32" Scope="User">
+    <Setting Name="OAPAYSpeed" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1000</Value>
     </Setting>
-    <Setting Name="AAPAXBacklashCompensation" Type="System.Single" Scope="User">
+    <Setting Name="OAPAXBacklashCompensation" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="AAPAReverseAzimuth" Type="System.Boolean" Scope="User">
+    <Setting Name="OAPAReverseAzimuth" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AAPAReverseAltitude" Type="System.Boolean" Scope="User">
+    <Setting Name="OAPAReverseAltitude" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AAPAXRunCurrent" Type="System.Int32" Scope="User">
+    <Setting Name="OAPAXRunCurrent" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">600</Value>
     </Setting>
-    <Setting Name="AAPAYRunCurrent" Type="System.Int32" Scope="User">
+    <Setting Name="OAPAYRunCurrent" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">600</Value>
     </Setting>
-    <Setting Name="AAPAXHoldPercent" Type="System.Int32" Scope="User">
+    <Setting Name="OAPAXHoldPercent" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">50</Value>
     </Setting>
-    <Setting Name="AAPAYHoldPercent" Type="System.Int32" Scope="User">
+    <Setting Name="OAPAYHoldPercent" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">50</Value>
     </Setting>
 
-    <!-- TCP connection settings for AAPA -->
-    <Setting Name="AAPAConnectionMode" Type="NINA.Plugins.PolarAlignment.ConnectionMode" Scope="User">
+    <!-- TCP connection settings for OAPA -->
+    <Setting Name="OAPAConnectionMode" Type="NINA.Plugins.PolarAlignment.ConnectionMode" Scope="User">
       <Value Profile="(Default)">Serial</Value>
     </Setting>
-    <Setting Name="AAPATcpHost" Type="System.String" Scope="User">
+    <Setting Name="OAPATcpHost" Type="System.String" Scope="User">
       <Value Profile="(Default)">192.168.1.100</Value>
     </Setting>
-    <Setting Name="AAPATcpPort" Type="System.Int32" Scope="User">
+    <Setting Name="OAPATcpPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">23</Value>
     </Setting>
 
-    <Setting Name="AAPALastKnownIp" Type="System.String" Scope="User">
+    <Setting Name="OAPALastKnownIp" Type="System.String" Scope="User">
       <Value Profile="(Default)"></Value>
     </Setting>
-    <Setting Name="AAPALastKnownComPort" Type="System.String" Scope="User">
+    <Setting Name="OAPALastKnownComPort" Type="System.String" Scope="User">
       <Value Profile="(Default)"></Value>
     </Setting>
 

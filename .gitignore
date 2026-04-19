@@ -91,3 +91,6 @@ orleans.codegen.cs
 
 # Claude Code
 .claude/
+
+# Firmware (managed separately)
+firmware/

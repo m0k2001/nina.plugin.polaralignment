@@ -11,7 +11,7 @@ using NINA.Image.ImageAnalysis;
 using NINA.Image.Interfaces;
 using NINA.PlateSolving;
 using NINA.Plugins.PolarAlignment.Avalon;
-using NINA.Plugins.PolarAlignment.AAPA;
+using NINA.Plugins.PolarAlignment.OAPA;
 using NINA.Profile.Interfaces;
 using NINA.WPF.Base.Behaviors;
 using Serilog;
@@ -51,7 +51,7 @@ namespace NINA.Plugins.PolarAlignment {
         }
 
         public UniversalPolarAlignmentVM UniversalPolarAlignmentVM => PolarAlignmentPlugin.UniversalPolarAlignmentVM;
-        public UniversalPolarAlignmentAAPAVM UniversalPolarAlignmentAAPAVM => PolarAlignmentPlugin.UniversalPolarAlignmentAAPAVM;
+        public UniversalPolarAlignmentOAPAVM UniversalPolarAlignmentOAPAVM => PolarAlignmentPlugin.UniversalPolarAlignmentOAPAVM;
         public IPolarAlignmentSystemVM ActiveAlignmentSystemVM => PolarAlignmentPlugin.ActiveAlignmentSystemVM;
 
         public void ActivateFirstStep() {
